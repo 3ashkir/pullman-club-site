@@ -1,2 +1,4 @@
 .claude/
 server.log
+oralias-bakery/build/*.json
+oralias-bakery/build/og.html
