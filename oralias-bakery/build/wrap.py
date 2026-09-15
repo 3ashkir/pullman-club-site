@@ -10,8 +10,14 @@ DESC = ("Oralia's Bakery is a Mexican bakery on Marschall Rd in Shakopee, MN - p
 OG_DESC = ("Pan dulce mexicano y pasteles para toda ocasion. A panaderia at 590 Marschall Rd, Shakopee, MN. "
            "Open daily 8am-8pm.")
 
-canon = f'\n<link rel="canonical" href="{site}" />\n<meta property="og:url" content="{site}" />' if site else ""
-og_img = f"{site.rstrip('/')}/og.png" if site else "og.png"
+def meta_for(site):
+    """A canonical/og:url pair plus an absolute image, once a host is known."""
+    if not site:
+        return "", "og.png"
+    return (f'\n<link rel="canonical" href="{site}" />\n<meta property="og:url" content="{site}" />',
+            f"{site.rstrip('/')}/og.png")
+
+canon, og_img = "", "og.png"
 
 JSONLD = """{
   "@context": "https://schema.org",
@@ -45,36 +51,38 @@ JSONLD = """{
   }
 }"""
 
-META = f"""<meta name="description" content="{DESC}" />{canon}
-<meta name="theme-color" content="#FBF2DE" media="(prefers-color-scheme: light)" />
-<meta name="theme-color" content="#1C100B" media="(prefers-color-scheme: dark)" />
-<meta name="color-scheme" content="light dark" />
+def build_meta(canon, og_img):
+        return f"""<meta name="description" content="{DESC}" />{canon}
+    <meta name="theme-color" content="#FBF2DE" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#1C100B" media="(prefers-color-scheme: dark)" />
+    <meta name="color-scheme" content="light dark" />
 
-<meta property="og:type" content="business.business" />
-<meta property="og:site_name" content="Oralia's Bakery" />
-<meta property="og:title" content="Oralia's Bakery &mdash; Panader&iacute;a in Shakopee, MN" />
-<meta property="og:description" content="{OG_DESC}" />
-<meta property="og:image" content="{og_img}" />
-<meta property="og:image:width" content="1200" />
-<meta property="og:image:height" content="630" />
-<meta property="og:image:alt" content="Oralia's Bakery, a Mexican panaderia in Shakopee, Minnesota, under a string of papel picado." />
-<meta property="og:locale" content="en_US" />
-<meta property="og:locale:alternate" content="es_MX" />
-<meta name="twitter:card" content="summary_large_image" />
-<meta name="twitter:title" content="Oralia's Bakery &mdash; Panader&iacute;a in Shakopee, MN" />
-<meta name="twitter:description" content="{OG_DESC}" />
-<meta name="twitter:image" content="{og_img}" />
+    <meta property="og:type" content="business.business" />
+    <meta property="og:site_name" content="Oralia's Bakery" />
+    <meta property="og:title" content="Oralia's Bakery &mdash; Panader&iacute;a in Shakopee, MN" />
+    <meta property="og:description" content="{OG_DESC}" />
+    <meta property="og:image" content="{og_img}" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="Oralia's Bakery, a Mexican panaderia in Shakopee, Minnesota, under a string of papel picado." />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:locale:alternate" content="es_MX" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Oralia's Bakery &mdash; Panader&iacute;a in Shakopee, MN" />
+    <meta name="twitter:description" content="{OG_DESC}" />
+    <meta name="twitter:image" content="{og_img}" />
 
-<meta name="geo.region" content="US-MN" />
-<meta name="geo.placename" content="Shakopee, Minnesota" />
+    <meta name="geo.region" content="US-MN" />
+    <meta name="geo.placename" content="Shakopee, Minnesota" />
 
-<script type="application/ld+json">
-{JSONLD}
+    <script type="application/ld+json">
+    {JSONLD}
 </script>"""
 
 # --- standalone page (repo / any static host) ---
 head_bits, body_bits = content.split("</style>", 1)
 head_bits += "</style>"
+META = build_meta(*meta_for(""))          # repo build: host-agnostic, relative image
 head_bits = head_bits.replace("<title>Oralia&rsquo;s Bakery</title>", f"<title>{TITLE}</title>", 1)
 standalone = f"""<!doctype html>
 <html lang="en">
@@ -92,6 +100,7 @@ standalone = f"""<!doctype html>
 (ROOT / "index.html").write_text(standalone)
 
 # --- artifact build: the platform supplies doctype/head/body ---
-artifact = content.replace("</style>", "</style>\n" + META, 1)
+ART_META = build_meta(*meta_for(site))    # artifact build: absolute, canonical
+artifact = content.replace("</style>", "</style>\n" + ART_META, 1)
 (ROOT / "_artifact.html").write_text(artifact)
 print("index.html", len(standalone), "| _artifact.html", len(artifact))
