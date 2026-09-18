@@ -65,6 +65,12 @@ export function formatRelative(date) {
   return `${formatDate(date)} ${formatClock(date)}`
 }
 
+// "3:40 PM" today, "Sep 17, 3:40 PM" otherwise — for use where the label
+// already says what happened.
+export function formatRelativeShort(date) {
+  return isToday(date) ? formatClock(date) : `${formatDate(date)} ${formatClock(date)}`
+}
+
 // Expected-next-update text: a clock time for today, a date otherwise.
 export function formatWhen(date) {
   return isToday(date) ? `today ${formatClock(date)}` : `${formatDate(date)}, ${formatClock(date)}`

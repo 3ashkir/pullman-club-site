@@ -144,7 +144,7 @@ button { font: inherit; color: inherit; }
   text-wrap: balance;
 }
 
-.screen-sub { margin: 4px 0 0; color: var(--ink-2); font-size: 15px; }
+.screen-sub { margin: 6px 0 0; color: var(--ink-2); font-size: 16px; }
 
 /* ---------- area cards ---------- */
 
@@ -174,7 +174,7 @@ button { font: inherit; color: inherit; }
 
 .card-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
 .card-title { font-size: 19px; font-weight: 600; letter-spacing: -0.01em; }
-.card-blurb { color: var(--ink-2); font-size: 14px; }
+.card-blurb { color: var(--ink-2); font-size: 15px; }
 
 .card-meta {
   display: flex;
@@ -182,7 +182,7 @@ button { font: inherit; color: inherit; }
   gap: 6px 14px;
   margin-top: auto;
   padding-top: 4px;
-  font-size: 13px;
+  font-size: 14px;
   color: var(--ink-3);
   font-variant-numeric: tabular-nums;
 }
@@ -218,8 +218,8 @@ button { font: inherit; color: inherit; }
 }
 
 .list-main { display: flex; flex-direction: column; gap: 3px; flex: 1 1 auto; min-width: 0; }
-.list-title { font-size: 17px; font-weight: 500; letter-spacing: -0.01em; }
-.list-sub { font-size: 13px; color: var(--ink-2); }
+.list-title { font-size: 18px; font-weight: 500; letter-spacing: -0.01em; }
+.list-sub { font-size: 14px; color: var(--ink-2); }
 
 .list-side {
   display: flex;
@@ -295,12 +295,71 @@ button { font: inherit; color: inherit; }
   text-align: center;
 }
 
+/* ---------- PAR count strip ---------- */
+
+.stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 1px;
+  margin: 22px 0 0;
+  padding: 0;
+  background: var(--hairline);
+  border: 1px solid var(--hairline);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+
+.stat {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 16px 18px;
+  background: var(--surface);
+}
+
+.stat dd { margin: 0; }
+.stat-value { font-size: 20px; font-weight: 600; letter-spacing: -0.015em; font-variant-numeric: tabular-nums; }
+.stat-note { font-size: 13px; color: var(--ink-2); }
+
+/* ---------- labeled fields ---------- */
+
+.field-label {
+  margin: 0;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+
+.fields {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 14px 20px;
+  margin: 16px 0 0;
+  padding: 0;
+}
+
+.fields--wide { grid-template-columns: 1fr; }
+
+.field { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+
+.field-value {
+  margin: 0;
+  font-size: 16px;
+  font-variant-numeric: tabular-nums;
+  overflow-wrap: anywhere;
+}
+
+.short { font-weight: 600; }
+.soon { font-weight: 600; color: var(--accent); }
+
 /* ---------- item cards ---------- */
 
-.items { display: flex; flex-direction: column; gap: 12px; margin: 0; padding: 0; list-style: none; }
+.items { display: flex; flex-direction: column; gap: 12px; margin: 22px 0 0; padding: 0; list-style: none; }
 
 .item {
-  padding: 18px 20px;
+  padding: 18px 20px 20px;
   background: var(--surface);
   border: 1px solid var(--hairline);
   border-radius: var(--radius);
@@ -313,91 +372,59 @@ button { font: inherit; color: inherit; }
   background: var(--flag-bg);
 }
 
-.item-top { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 8px 14px; }
-.item-name { font-size: 17px; font-weight: 600; letter-spacing: -0.01em; }
-
-.item-counts {
+.item-top {
   display: flex;
   flex-wrap: wrap;
   align-items: baseline;
-  gap: 10px;
-  margin-top: 8px;
+  justify-content: space-between;
+  gap: 8px 14px;
 }
 
-.count { font-size: 15px; font-variant-numeric: tabular-nums; }
-.count--short { font-weight: 600; }
-.count-note { font-size: 13px; color: var(--ink-2); }
+.item-name {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+  letter-spacing: -0.012em;
+}
 
 .exception {
-  margin: 12px 0 0;
-  font-size: 13px;
-  font-weight: 600;
-  letter-spacing: 0.02em;
+  margin: 10px 0 0;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
   color: var(--flag-ink);
 }
 
-.item-note { margin: 8px 0 0; font-size: 14px; color: var(--ink-2); max-width: 62ch; }
-.item-sub, .item-next { margin: 8px 0 0; font-size: 14px; font-variant-numeric: tabular-nums; }
+.item-note {
+  margin: 16px 0 0;
+  padding-top: 14px;
+  border-top: 1px solid var(--hairline);
+  font-size: 15px;
+  color: var(--ink-2);
+  max-width: 64ch;
+}
 
-.field-label { color: var(--ink-3); }
+.item--exception .item-note { border-top-color: var(--flag-line); }
 
+/* Status reads as words; weight, fill and border style are the second cue, so
+   nothing here depends on color alone. */
 .pill {
-  padding: 3px 10px;
+  padding: 4px 11px;
   border: 1px solid var(--hairline);
   border-radius: 999px;
   background: var(--pill-bg);
   font-size: 13px;
+  font-weight: 500;
   white-space: nowrap;
 }
 
-.pill--on_time { color: var(--ink-2); }
-.pill--arriving_today { color: var(--ink); }
-.pill--delayed { border-color: var(--ink-3); font-weight: 600; }
-.pill--substitute_pending { border-style: dashed; border-color: var(--ink-3); font-weight: 600; }
-.pill--backordered { background: var(--ink); border-color: var(--ink); color: var(--surface); font-weight: 600; }
-
-/* ---------- delivery / order records ---------- */
-
-.records {
-  margin: 0;
-  padding: 0;
-  list-style: none;
-  background: var(--surface);
-  border: 1px solid var(--hairline);
-  border-radius: var(--radius);
-  box-shadow: var(--shadow);
-  overflow: hidden;
-}
-
-.records li {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-  padding: 15px 18px;
-}
-
-.records li + li { border-top: 1px solid var(--hairline); }
-
-.record-main { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
-.record-title { font-size: 16px; font-weight: 500; }
-.record-sub { font-size: 13px; color: var(--ink-2); }
-
-.record-side {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  gap: 3px;
-  font-size: 13px;
-  text-align: right;
-  font-variant-numeric: tabular-nums;
-  white-space: nowrap;
-}
-
-.qty { font-size: 15px; font-weight: 600; }
-.eta { color: var(--ink-2); }
-.eta--today { color: var(--accent); font-weight: 600; }
+.pill--on_par { color: var(--ink-2); }
+.pill--low { border-color: var(--ink-3); color: var(--ink); font-weight: 600; }
+.pill--delivered { border-color: var(--accent); color: var(--accent); background: none; font-weight: 600; }
+.pill--on_way { border-color: var(--ink-3); color: var(--ink); }
+.pill--substitute { border-style: dashed; border-color: var(--ink-3); color: var(--ink); font-weight: 600; }
+.pill--no_substitute { background: var(--ink); border-color: var(--ink); color: var(--surface); font-weight: 700; }
 
 /* ---------- colophon ---------- */
 
@@ -412,6 +439,12 @@ button { font: inherit; color: inherit; }
 
 @media (max-width: 560px) {
   .screen-title { font-size: 26px; }
+
+  /* Two labeled fields per row, and all four tabs without a scroll. */
+  .fields { grid-template-columns: repeat(auto-fit, minmax(128px, 1fr)); gap: 12px 14px; }
+  .item { padding: 16px; }
+  .tabs { gap: 2px; padding: 3px; }
+  .tab { padding: 9px 7px; font-size: 14px; gap: 5px; }
   .list-row { flex-wrap: wrap; }
   .list-main { flex: 1 1 60%; order: 1; }
   .chev { order: 2; }
@@ -423,6 +456,5 @@ button { font: inherit; color: inherit; }
     gap: 10px;
     text-align: left;
   }
-  .records li { align-items: flex-start; }
   .tab { flex: 0 0 auto; }
 }

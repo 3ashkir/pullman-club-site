@@ -25,25 +25,32 @@ Areas  →  Locations in that area  →  One location, four tabs
 | Items | Everything tracked here: on-hand vs PAR, status, what happens next |
 | Delivered | What the supply handler stocked, with quantities and times |
 | Orders | What the charge nurse ordered, who ordered it, and when it lands |
-| Backorder | Backordered and substitute-pending items, with substitute status |
+| Backorder | Backordered items: what the substitute is, or that there isn't one |
 
-Anything that needs a person — backordered with no substitute identified, or a
-substitute waiting on clinical sign-off — is marked in three ways that do not
-rely on color: a tinted chip that counts them on the area and location screens,
-a heavier left border on the item card, and an all-caps line naming the reason.
+Every value on the location screens carries its own label — on hand, PAR level,
+shelf, who counted, who ordered, when it lands — so nothing has to be inferred
+from position or color. The PAR count sits at the top of each location: the time
+it was taken, the handler who took it, how many items were counted, and how many
+came up short.
 
 ## Statuses
 
+The coordinator handles substitutions directly, so there is no approval or
+sign-off state to read. What is left is what is true on the shelf:
+
 | Status | Meaning |
 | --- | --- |
-| Backordered | Vendor cannot fill; watch the fill date or the substitute |
-| Delayed | Shipped but late; revised ETA shown |
-| Substitute pending | An alternate item is in play |
-| Arriving today | On the truck, ETA today |
-| On time | Nothing to watch; next scheduled PAR count shown |
+| No substitute | Backordered with nothing coming — the only state that needs a person |
+| Substitute on the way | Coordinator swapped in an alternate; it is on the shelf or shipping |
+| On the way | Ordered and in transit, with the ETA shown |
+| Low | Below PAR with nothing ordered yet |
+| Delivered | Restocked to PAR within the last six hours |
+| On PAR | At or above PAR, nothing pending |
 
-Items sort by status urgency within a location, so whatever needs watching sits
-at the top of the Items tab.
+Items sort in that order within a location, so whatever needs watching sits at
+the top of the Items tab. "No substitute" items are also counted on the area and
+location screens and set apart on the card by a heavier border and a written
+reason — never by color alone.
 
 ## Running it
 

@@ -81,19 +81,31 @@ function locationsScreen(area) {
   )
 }
 
+function field(label, value, cls) {
+  return (
+    '<div class="field"><dt class="field-label">' + esc(label) + '</dt>' +
+    '<dd class="field-value' + (cls ? ' ' + cls : '') + '">' + value + '</dd></div>'
+  )
+}
+
 function itemCard(item) {
   var short = item.onHand < item.par
+  var shelf = short
+    ? '<span class="short">' + (item.par - item.onHand) + ' below PAR</span>'
+    : 'At PAR'
   return (
     '<li class="item' + (item.exception ? ' item--exception' : '') + '">' +
-    '<div class="item-top"><span class="item-name">' + esc(item.name) + '</span>' +
+    '<div class="item-top"><h3 class="item-name">' + esc(item.name) + '</h3>' +
     '<span class="pill pill--' + item.status + '">' + item.statusLabel + '</span></div>' +
-    '<div class="item-counts"><span class="count' + (short ? ' count--short' : '') + '">' +
-    item.onHand + ' of ' + item.par + ' ' + item.unit + '</span>' +
-    '<span class="count-note">' + (short ? item.par - item.onHand + ' below PAR' : 'at PAR') + '</span></div>' +
-    (item.exception ? '<p class="exception">' + esc(EXCEPTION[item.exception]) + '</p>' : '') +
+    (item.exception ? '<p class="exception">' + esc(EXCEPTION) + '</p>' : '') +
+    '<dl class="fields">' +
+    field('On hand', item.onHand + ' ' + item.unit) +
+    field('PAR level', item.par + ' ' + item.unit) +
+    field('Shelf', shelf) +
+    field(item.next.label, esc(nextText(item.next))) +
+    '</dl>' +
+    (item.substitute ? '<dl class="fields fields--wide">' + field('Substitute', esc(item.substitute)) + '</dl>' : '') +
     (item.note ? '<p class="item-note">' + esc(item.note) + '</p>' : '') +
-    (item.substitute ? '<p class="item-sub"><span class="field-label">Substitute</span> ' + esc(item.substitute) + '</p>' : '') +
-    '<p class="item-next"><span class="field-label">' + esc(item.next.label) + '</span> ' + esc(nextText(item.next)) + '</p>' +
     '</li>'
   )
 }
@@ -107,17 +119,17 @@ function deliveriesPanel(location) {
   var rows = location.deliveries
     .map(function (d) {
       return (
-        '<li><span class="record-main"><span class="record-title">' + esc(d.name) + '</span>' +
-        '<span class="record-sub">Stocked by ' + esc(d.handler) + '</span></span>' +
-        '<span class="record-side"><span class="qty">+' + d.qty + ' ' + d.unit + '</span>' +
-        '<span class="muted">' + formatRelative(d.at) + '</span></span></li>'
+        '<li class="item"><div class="item-top"><h3 class="item-name">' + esc(d.name) + '</h3>' +
+        '<span class="pill pill--delivered">Delivered</span></div>' +
+        '<dl class="fields">' +
+        field('Quantity', d.qty + ' ' + d.unit) +
+        field('Delivered', formatRelative(d.at)) +
+        field('Stocked by', esc(d.handler)) +
+        '</dl></li>'
       )
     })
     .join('')
-  return (
-    '<p class="panel-note">Last PAR count ' + formatRelative(location.lastCount.at) + ' by ' + esc(location.lastCount.handler) + '.</p>' +
-    '<ul class="records">' + rows + '</ul>'
-  )
+  return '<ul class="items">' + rows + '</ul>'
 }
 
 function ordersPanel(location) {
@@ -125,14 +137,18 @@ function ordersPanel(location) {
   var rows = location.orders
     .map(function (o) {
       return (
-        '<li><span class="record-main"><span class="record-title">' + esc(o.name) + '</span>' +
-        '<span class="record-sub">Ordered by ' + esc(o.orderedBy) + ' · ' + formatRelative(o.placedAt) + '</span></span>' +
-        '<span class="record-side"><span class="qty">' + o.qty + ' ' + o.unit + '</span>' +
-        '<span class="' + (o.sameDay ? 'eta eta--today' : 'eta') + '">' + (o.sameDay ? 'Arrives ' : 'ETA ') + formatWhen(o.eta) + '</span></span></li>'
+        '<li class="item"><div class="item-top"><h3 class="item-name">' + esc(o.name) + '</h3>' +
+        '<span class="pill pill--on_way">On the way</span></div>' +
+        '<dl class="fields">' +
+        field('Quantity', o.qty + ' ' + o.unit) +
+        field('Ordered by', esc(o.orderedBy)) +
+        field('Placed', formatRelative(o.placedAt)) +
+        field(o.sameDay ? 'Arrives' : 'ETA', '<span class="' + (o.sameDay ? 'soon' : '') + '">' + formatWhen(o.eta) + '</span>') +
+        '</dl></li>'
       )
     })
     .join('')
-  return '<ul class="records">' + rows + '</ul>'
+  return '<ul class="items">' + rows + '</ul>'
 }
 
 function backorderPanel(items) {
@@ -140,7 +156,16 @@ function backorderPanel(items) {
   return '<ul class="items">' + items.map(itemCard).join('') + '</ul>'
 }
 
+function stat(label, value, note) {
+  return (
+    '<div class="stat"><dt class="field-label">' + esc(label) + '</dt>' +
+    '<dd class="stat-value">' + esc(value) + '</dd>' +
+    '<dd class="stat-note">' + esc(note) + '</dd></div>'
+  )
+}
+
 function detailScreen(location) {
+  var summary = locationSummary(location)
   var backorders = backorderItems(location)
   var counts = {
     items: location.items.length,
@@ -164,7 +189,13 @@ function detailScreen(location) {
 
   return (
     '<h2 class="screen-title">' + esc(location.name) + '</h2>' +
-    '<p class="screen-sub">' + esc(location.kind) + ' · counted ' + formatRelative(location.lastCount.at) + ' by ' + esc(location.lastCount.handler) + '</p>' +
+    '<p class="screen-sub">' + esc(location.kind) + '</p>' +
+    '<dl class="stats">' +
+    stat('Last PAR count', formatClock(location.lastCount.at), formatRelative(location.lastCount.at)) +
+    stat('Counted by', location.lastCount.handler, 'Supply handler') +
+    stat('Items counted', String(summary.items), summary.belowPar + ' below PAR') +
+    stat('Needs attention', String(summary.attention), summary.attention === 0 ? 'Nothing stuck' : 'No substitute yet') +
+    '</dl>' +
     '<div class="tabs" role="tablist" aria-label="Location views">' + tabs + '</div>' +
     '<div class="panel" id="panel" role="tabpanel" aria-labelledby="tab-' + state.tab + '">' + body + '</div>'
   )

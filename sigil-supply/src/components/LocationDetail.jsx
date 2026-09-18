@@ -1,5 +1,5 @@
 import { backorderItems, locationSummary } from '../data/hospital.js'
-import { formatRelative } from '../utils/time.js'
+import { formatRelative, formatClock } from '../utils/time.js'
 import { ItemsPanel, DeliveriesPanel, OrdersPanel, BackorderPanel } from './panels.jsx'
 
 const TABS = [
@@ -22,9 +22,31 @@ export default function LocationDetail({ location, tab, onTab }) {
   return (
     <>
       <h2 className="screen-title">{location.name}</h2>
-      <p className="screen-sub">
-        {location.kind} · counted {formatRelative(location.lastCount.at)} by {location.lastCount.handler}
-      </p>
+      <p className="screen-sub">{location.kind}</p>
+
+      {/* The PAR count itself, up front — who counted, when, and what it found. */}
+      <dl className="stats">
+        <div className="stat">
+          <dt className="field-label">Last PAR count</dt>
+          <dd className="stat-value">{formatClock(location.lastCount.at)}</dd>
+          <dd className="stat-note">{formatRelative(location.lastCount.at)}</dd>
+        </div>
+        <div className="stat">
+          <dt className="field-label">Counted by</dt>
+          <dd className="stat-value">{location.lastCount.handler}</dd>
+          <dd className="stat-note">Supply handler</dd>
+        </div>
+        <div className="stat">
+          <dt className="field-label">Items counted</dt>
+          <dd className="stat-value">{summary.items}</dd>
+          <dd className="stat-note">{summary.belowPar} below PAR</dd>
+        </div>
+        <div className="stat">
+          <dt className="field-label">Needs attention</dt>
+          <dd className="stat-value">{summary.attention}</dd>
+          <dd className="stat-note">{summary.attention === 0 ? 'Nothing stuck' : 'No substitute yet'}</dd>
+        </div>
+      </dl>
 
       <div className="tabs" role="tablist" aria-label="Location views">
         {TABS.map((t) => (

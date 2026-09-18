@@ -1,5 +1,12 @@
 import { CATALOG, STATUS } from './catalog.js'
-import { minutesAgo, hoursFromNow, laterToday, daysFromNow, nextRoutineCount } from '../utils/time.js'
+import {
+  minutesAgo,
+  hoursFromNow,
+  laterToday,
+  daysFromNow,
+  nextRoutineCount,
+  formatRelativeShort,
+} from '../utils/time.js'
 
 // ---------------------------------------------------------------------------
 // Sample data, written as compact tuples and expanded by the builders below.
@@ -14,7 +21,7 @@ import { minutesAgo, hoursFromNow, laterToday, daysFromNow, nextRoutineCount } f
 
 function buildItem([sku, onHand, extra = {}]) {
   const [name, unit, par] = CATALOG[sku]
-  const status = extra.status ?? 'on_time'
+  const status = extra.status ?? (onHand < par ? 'low' : 'on_par')
   return {
     sku,
     name,
@@ -24,7 +31,7 @@ function buildItem([sku, onHand, extra = {}]) {
     status,
     statusLabel: STATUS[status].label,
     rank: STATUS[status].rank,
-    exception: extra.exception ?? null,
+    exception: status === 'no_substitute',
     note: extra.note ?? null,
     substitute: extra.substitute ?? null,
     next: extra.next ?? { label: 'Next count', at: nextRoutineCount() },
@@ -42,14 +49,38 @@ function buildOrder([sku, qty, min, orderedBy, etaHours]) {
   return { sku, name, unit, qty, placedAt: minutesAgo(min), orderedBy, eta, sameDay: etaHours <= 12 }
 }
 
+// Anything restocked in the last six hours reads as "Delivered" so the shelf
+// state and the delivery log never disagree.
+const RECENT = 6 * 60 * 60 * 1000
+
+function markDelivered(items, deliveries) {
+  return items.map((item) => {
+    if (item.status !== 'on_par' && item.status !== 'low') return item
+    const drop = deliveries.find((d) => d.sku === item.sku && Date.now() - d.at < RECENT)
+    if (!drop) return item
+    return {
+      ...item,
+      onHand: item.par,
+      status: 'delivered',
+      statusLabel: STATUS.delivered.label,
+      rank: STATUS.delivered.rank,
+      next: { label: 'Delivered', text: `${formatRelativeShort(drop.at)} by ${drop.handler}` },
+    }
+  })
+}
+
 function loc(id, name, kind, spec) {
+  const deliveries = spec.deliveries.map(buildDelivery).sort((a, b) => b.at - a.at)
+  const items = markDelivered(spec.items.map(buildItem), deliveries).sort(
+    (a, b) => a.rank - b.rank || a.name.localeCompare(b.name),
+  )
   return {
     id,
     name,
     kind,
     lastCount: { at: minutesAgo(spec.lastCount[0]), handler: spec.lastCount[1] },
-    items: spec.items.map(buildItem).sort((a, b) => a.rank - b.rank || a.name.localeCompare(b.name)),
-    deliveries: spec.deliveries.map(buildDelivery).sort((a, b) => b.at - a.at),
+    items,
+    deliveries,
     orders: spec.orders.map(buildOrder).sort((a, b) => a.eta - b.eta),
   }
 }
@@ -63,20 +94,19 @@ export const areas = [
       loc('3west', '3 West — Clean Utility', 'Clean utility', {
         lastCount: [95, 'T. Alvarez'],
         items: [
-          ['gauze4', 14],
-          ['gauze2', 11],
-          ['glovesM', 22],
-          ['underpad', 16],
-          ['saline250', 19],
+          ['gauze4', 21],
+          ['gauze2', 14],
+          ['glovesM', 30],
+          ['underpad', 21],
+          ['saline250', 24],
           ['film475', 2, {
-            status: 'substitute_pending',
-            exception: 'needs_signoff',
-            note: 'Distributor short. Equivalent film dressing is on the shelf but nursing has not signed off on the swap.',
-            substitute: 'Adhesive film dressing 4 x 4.75 (alternate brand) — 6 box on hand',
-            next: { label: 'Sign-off needed by', at: hoursFromNow(5) },
+            status: 'substitute',
+            note: 'Distributor short. Coordinator put the equivalent film dressing on the shelf; the rest ships tomorrow.',
+            substitute: 'Adhesive film dressing 4 x 4.75 — 6 box on hand now',
+            next: { label: 'Substitute ETA', at: hoursFromNow(20) },
           }],
           ['ivkit', 9, {
-            status: 'arriving_today',
+            status: 'on_way',
             note: 'Ordered by charge nurse this morning.',
             next: { label: 'ETA', at: laterToday(3) },
           }],
@@ -95,11 +125,11 @@ export const areas = [
         lastCount: [150, 'T. Alvarez'],
         items: [
           ['nonadh', 8],
-          ['gauze4', 17],
-          ['glovesL', 20],
-          ['ace4', 21],
+          ['gauze4', 21],
+          ['glovesL', 24],
+          ['ace4', 24],
           ['mask2', 18],
-          ['cannula', 16],
+          ['cannula', 20],
         ],
         deliveries: [
           ['nonadh', 4, 152, 'T. Alvarez'],
@@ -110,16 +140,16 @@ export const areas = [
       loc('5north', '5 North — Clean Utility', 'Clean utility', {
         lastCount: [70, 'M. Reyes'],
         items: [
-          ['glovesM', 26],
+          ['glovesM', 30],
           ['needle21', 4, {
-            status: 'arriving_today',
+            status: 'on_way',
             note: 'Below PAR — replenishment on the afternoon run.',
             next: { label: 'ETA', at: laterToday(1) },
           }],
-          ['syringe3', 10],
-          ['gauze2', 13],
-          ['ekg', 9],
-          ['specimen', 12],
+          ['syringe3', 13],
+          ['gauze2', 14],
+          ['ekg', 12],
+          ['specimen', 16],
         ],
         deliveries: [
           ['glovesM', 12, 72, 'M. Reyes'],
@@ -131,16 +161,15 @@ export const areas = [
         lastCount: [230, 'M. Reyes'],
         items: [
           ['feedbag', 3, {
-            status: 'backordered',
-            exception: 'no_substitute',
+            status: 'no_substitute',
             note: 'Manufacturer allocation. Nothing equivalent stocked; roughly 4 days of use on hand.',
             next: { label: 'Vendor update', text: 'no date committed' },
           }],
-          ['ngtube', 5],
-          ['gauze4', 15],
-          ['glovesL', 18],
-          ['underpad', 14],
-          ['saline250', 20],
+          ['ngtube', 8],
+          ['gauze4', 18],
+          ['glovesL', 25],
+          ['underpad', 20],
+          ['saline250', 24],
         ],
         deliveries: [
           ['saline250', 12, 235, 'M. Reyes'],
@@ -159,15 +188,15 @@ export const areas = [
         lastCount: [55, 'T. Alvarez'],
         items: [
           ['foley16', 4, {
-            status: 'delayed',
+            status: 'on_way',
             note: 'Carrier delay in transit — arriving tomorrow morning instead of today.',
             next: { label: 'Revised ETA', at: hoursFromNow(21) },
           }],
           ['suction', 10],
-          ['ivkit', 15],
-          ['syringe10', 11],
-          ['chg26', 7],
-          ['gownL', 16],
+          ['ivkit', 18],
+          ['syringe10', 12],
+          ['chg26', 9],
+          ['gownL', 18],
         ],
         deliveries: [
           ['suction', 6, 58, 'T. Alvarez'],
@@ -179,15 +208,15 @@ export const areas = [
         lastCount: [40, 'T. Alvarez'],
         items: [
           ['trach', 2, {
-            status: 'delayed',
+            status: 'on_way',
             note: 'Short-shipped from the distributor; balance releases this evening.',
             next: { label: 'Revised ETA', at: hoursFromNow(9) },
           }],
-          ['ngtube', 6],
-          ['suction', 9],
-          ['glovesM', 24],
-          ['gauze4', 16],
-          ['cannula', 18],
+          ['ngtube', 8],
+          ['suction', 13],
+          ['glovesM', 30],
+          ['gauze4', 18],
+          ['cannula', 21],
         ],
         deliveries: [
           ['gauze4', 6, 44, 'T. Alvarez'],
@@ -198,11 +227,11 @@ export const areas = [
       loc('pacu', 'PACU — Supply Room', 'Supply room', {
         lastCount: [120, 'M. Reyes'],
         items: [
-          ['saline250', 22],
+          ['saline250', 24],
           ['syringe10', 12],
-          ['gownL', 19],
-          ['ekg', 11],
-          ['mask2', 17],
+          ['gownL', 18],
+          ['ekg', 12],
+          ['mask2', 20],
         ],
         deliveries: [['saline250', 12, 122, 'M. Reyes']],
         orders: [],
@@ -218,15 +247,15 @@ export const areas = [
         lastCount: [35, 'M. Reyes'],
         items: [
           ['ivkit', 11, {
-            status: 'arriving_today',
+            status: 'on_way',
             note: 'High use overnight — replenishment on the way.',
             next: { label: 'ETA', at: laterToday(3) },
           }],
-          ['gauze4', 18],
-          ['ace4', 20],
-          ['suture30', 8],
-          ['glovesM', 25],
-          ['edta4', 13],
+          ['gauze4', 21],
+          ['ace4', 22],
+          ['suture30', 10],
+          ['glovesM', 31],
+          ['edta4', 15],
         ],
         deliveries: [
           ['gauze4', 10, 38, 'M. Reyes'],
@@ -238,15 +267,15 @@ export const areas = [
         lastCount: [28, 'M. Reyes'],
         items: [
           ['syringe10', 5, {
-            status: 'arriving_today',
+            status: 'on_way',
             note: 'Below PAR after the overnight census.',
             next: { label: 'ETA', at: laterToday(2) },
           }],
           ['needle21', 8],
-          ['edta4', 12],
-          ['specimen', 14],
-          ['mask2', 19],
-          ['glovesL', 21],
+          ['edta4', 16],
+          ['specimen', 15],
+          ['mask2', 20],
+          ['glovesL', 22],
         ],
         deliveries: [
           ['edta4', 8, 30, 'M. Reyes'],
@@ -264,10 +293,10 @@ export const areas = [
       loc('or1', 'OR Core — Suite 1', 'Core room', {
         lastCount: [58, 'T. Alvarez'],
         items: [
-          ['gownL', 18],
-          ['gauze4', 19],
-          ['suture30', 9],
-          ['chg26', 8],
+          ['gownL', 20],
+          ['gauze4', 20],
+          ['suture30', 11],
+          ['chg26', 6],
           ['mask2', 20],
         ],
         deliveries: [['gownL', 10, 60, 'T. Alvarez']],
@@ -277,19 +306,19 @@ export const areas = [
         lastCount: [45, 'T. Alvarez'],
         items: [
           ['chg26', 3, {
-            status: 'delayed',
+            status: 'on_way',
             note: 'Held at receiving for lot verification.',
             next: { label: 'Revised ETA', at: hoursFromNow(6) },
           }],
           ['suture30', 4, {
-            status: 'backordered',
-            note: 'Approved substitute suture is already stocked at this core — no action needed.',
-            substitute: 'Suture, 3-0 polypropylene — 7 box on hand',
-            next: { label: 'Fill date', at: daysFromNow(9) },
+            status: 'substitute',
+            note: 'Coordinator swapped in polypropylene suture — already on the shelf here.',
+            substitute: 'Suture, 3-0 polypropylene — 7 box on hand now',
+            next: { label: 'Original item fills', at: daysFromNow(9) },
           }],
-          ['gownL', 17],
+          ['gownL', 21],
           ['gauze4', 20],
-          ['glovesM', 23],
+          ['glovesM', 28],
         ],
         deliveries: [['gauze4', 8, 47, 'T. Alvarez']],
         orders: [['chg26', 6, 300, 'J. Pham, RN', 6]],
@@ -297,11 +326,11 @@ export const areas = [
       loc('or4', 'OR Core — Suite 4', 'Core room', {
         lastCount: [100, 'M. Reyes'],
         items: [
-          ['suction', 11],
+          ['suction', 13],
           ['gownL', 20],
-          ['saline250', 21],
+          ['saline250', 24],
           ['glovesL', 22],
-          ['mask2', 18],
+          ['mask2', 20],
         ],
         deliveries: [['suction', 6, 102, 'M. Reyes']],
         orders: [],
@@ -317,27 +346,25 @@ export const areas = [
         lastCount: [180, 'M. Reyes'],
         items: [
           ['alginate', 1, {
-            status: 'backordered',
-            exception: 'no_substitute',
+            status: 'no_substitute',
             note: 'No fill date from the vendor. Nothing equivalent stocked — materials management is sourcing.',
             next: { label: 'Vendor update', text: `expected ${daysFromNow(2).toLocaleDateString([], { month: 'short', day: 'numeric' })}` },
           }],
           ['hydro44', 2, {
-            status: 'substitute_pending',
-            exception: 'needs_signoff',
-            note: 'Alternate brand offered by the distributor — needs wound care review before it can be ordered.',
-            substitute: 'Hydrocolloid 4x4 (alternate brand) — quoted, not ordered',
-            next: { label: 'Sign-off needed by', at: hoursFromNow(23) },
+            status: 'substitute',
+            note: 'Coordinator ordered the alternate brand from the secondary distributor.',
+            substitute: 'Hydrocolloid 4x4 (alternate brand) — 4 box ordered',
+            next: { label: 'Substitute ETA', at: hoursFromNow(23) },
           }],
           ['npwtsm', 3, {
-            status: 'backordered',
-            note: 'Approved substitute kit already stocked at this PAR — no action needed.',
-            substitute: 'NPWT kit, small (alternate brand) — 4 kit on hand',
-            next: { label: 'Fill date', at: daysFromNow(6) },
+            status: 'substitute',
+            note: 'Coordinator swapped in the alternate kit — on the shelf here now.',
+            substitute: 'NPWT kit, small (alternate brand) — 4 kit on hand now',
+            next: { label: 'Original item fills', at: daysFromNow(6) },
           }],
-          ['nonadh', 9],
-          ['gauze4', 15],
-          ['film475', 7],
+          ['nonadh', 10],
+          ['gauze4', 21],
+          ['film475', 6],
         ],
         deliveries: [
           ['gauze4', 6, 182, 'M. Reyes'],
@@ -348,10 +375,10 @@ export const areas = [
       loc('ortho', 'Ortho Clinic — PAR 1', 'Clinic PAR', {
         lastCount: [110, 'M. Reyes'],
         items: [
-          ['ace4', 22],
-          ['gauze4', 16],
+          ['ace4', 24],
+          ['gauze4', 21],
           ['nonadh', 10],
-          ['glovesM', 21],
+          ['glovesM', 28],
         ],
         deliveries: [['ace4', 12, 112, 'M. Reyes']],
         orders: [],
@@ -360,14 +387,14 @@ export const areas = [
         lastCount: [135, 'T. Alvarez'],
         items: [
           ['cath14', 6, {
-            status: 'substitute_pending',
-            note: 'Substitute approved by nursing — shipping from an alternate distributor.',
-            substitute: 'Intermittent catheter 14 Fr (alternate brand) — approved',
+            status: 'substitute',
+            note: 'Coordinator ordered the alternate catheter — shipping from the secondary distributor.',
+            substitute: 'Intermittent catheter 14 Fr (alternate brand) — 20 ea ordered',
             next: { label: 'Substitute ETA', at: hoursFromNow(20) },
           }],
-          ['glovesM', 20],
-          ['underpad', 15],
-          ['gauze2', 12],
+          ['glovesM', 31],
+          ['underpad', 20],
+          ['gauze2', 16],
         ],
         deliveries: [['underpad', 6, 138, 'T. Alvarez']],
         orders: [['cath14', 20, 900, 'L. Maher, RN', 20]],
@@ -376,13 +403,13 @@ export const areas = [
         lastCount: [50, 'M. Reyes'],
         items: [
           ['edta4', 9, {
-            status: 'arriving_today',
+            status: 'on_way',
             note: 'Steady draw volume this week; standing order runs daily.',
             next: { label: 'ETA', at: laterToday(4) },
           }],
-          ['needle21', 9],
-          ['specimen', 13],
-          ['glovesM', 19],
+          ['needle21', 8],
+          ['specimen', 15],
+          ['glovesM', 30],
         ],
         deliveries: [['specimen', 8, 52, 'M. Reyes']],
         orders: [['edta4', 15, 60, 'S. Kirby, RN', 4]],
@@ -395,7 +422,9 @@ export const areas = [
 
 export function locationSummary(location) {
   const attention = location.items.filter((i) => i.exception)
-  const backordered = location.items.filter((i) => i.status === 'backordered')
+  const backordered = location.items.filter(
+    (i) => i.status === 'no_substitute' || i.status === 'substitute',
+  )
   return {
     items: location.items.length,
     attention: attention.length,
@@ -429,5 +458,7 @@ export function findLocation(areaId, locationId) {
 }
 
 export function backorderItems(location) {
-  return location.items.filter((i) => i.status === 'backordered' || i.status === 'substitute_pending')
+  return location.items.filter(
+    (i) => i.status === 'no_substitute' || i.status === 'substitute',
+  )
 }

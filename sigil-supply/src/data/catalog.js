@@ -33,14 +33,13 @@ export const CATALOG = {
 }
 
 export const STATUS = {
-  backordered: { label: 'Backordered', rank: 0 },
-  delayed: { label: 'Delayed', rank: 1 },
-  substitute_pending: { label: 'Substitute pending', rank: 2 },
-  arriving_today: { label: 'Arriving today', rank: 3 },
-  on_time: { label: 'On time', rank: 4 },
+  no_substitute: { label: 'No substitute', rank: 0 },
+  substitute: { label: 'Substitute on the way', rank: 1 },
+  on_way: { label: 'On the way', rank: 2 },
+  low: { label: 'Low', rank: 3 },
+  delivered: { label: 'Delivered', rank: 4 },
+  on_par: { label: 'On PAR', rank: 5 },
 }
 
-export const EXCEPTION = {
-  no_substitute: 'No substitute identified',
-  needs_signoff: 'Substitute needs sign-off',
-}
+// The only thing that still needs a person: backordered with nothing coming.
+export const EXCEPTION = 'Backordered — nothing coming'

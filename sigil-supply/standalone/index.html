@@ -147,7 +147,7 @@ button { font: inherit; color: inherit; }
   text-wrap: balance;
 }
 
-.screen-sub { margin: 4px 0 0; color: var(--ink-2); font-size: 15px; }
+.screen-sub { margin: 6px 0 0; color: var(--ink-2); font-size: 16px; }
 
 /* ---------- area cards ---------- */
 
@@ -177,7 +177,7 @@ button { font: inherit; color: inherit; }
 
 .card-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
 .card-title { font-size: 19px; font-weight: 600; letter-spacing: -0.01em; }
-.card-blurb { color: var(--ink-2); font-size: 14px; }
+.card-blurb { color: var(--ink-2); font-size: 15px; }
 
 .card-meta {
   display: flex;
@@ -185,7 +185,7 @@ button { font: inherit; color: inherit; }
   gap: 6px 14px;
   margin-top: auto;
   padding-top: 4px;
-  font-size: 13px;
+  font-size: 14px;
   color: var(--ink-3);
   font-variant-numeric: tabular-nums;
 }
@@ -221,8 +221,8 @@ button { font: inherit; color: inherit; }
 }
 
 .list-main { display: flex; flex-direction: column; gap: 3px; flex: 1 1 auto; min-width: 0; }
-.list-title { font-size: 17px; font-weight: 500; letter-spacing: -0.01em; }
-.list-sub { font-size: 13px; color: var(--ink-2); }
+.list-title { font-size: 18px; font-weight: 500; letter-spacing: -0.01em; }
+.list-sub { font-size: 14px; color: var(--ink-2); }
 
 .list-side {
   display: flex;
@@ -298,12 +298,71 @@ button { font: inherit; color: inherit; }
   text-align: center;
 }
 
+/* ---------- PAR count strip ---------- */
+
+.stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 1px;
+  margin: 22px 0 0;
+  padding: 0;
+  background: var(--hairline);
+  border: 1px solid var(--hairline);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+
+.stat {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 16px 18px;
+  background: var(--surface);
+}
+
+.stat dd { margin: 0; }
+.stat-value { font-size: 20px; font-weight: 600; letter-spacing: -0.015em; font-variant-numeric: tabular-nums; }
+.stat-note { font-size: 13px; color: var(--ink-2); }
+
+/* ---------- labeled fields ---------- */
+
+.field-label {
+  margin: 0;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+
+.fields {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 14px 20px;
+  margin: 16px 0 0;
+  padding: 0;
+}
+
+.fields--wide { grid-template-columns: 1fr; }
+
+.field { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+
+.field-value {
+  margin: 0;
+  font-size: 16px;
+  font-variant-numeric: tabular-nums;
+  overflow-wrap: anywhere;
+}
+
+.short { font-weight: 600; }
+.soon { font-weight: 600; color: var(--accent); }
+
 /* ---------- item cards ---------- */
 
-.items { display: flex; flex-direction: column; gap: 12px; margin: 0; padding: 0; list-style: none; }
+.items { display: flex; flex-direction: column; gap: 12px; margin: 22px 0 0; padding: 0; list-style: none; }
 
 .item {
-  padding: 18px 20px;
+  padding: 18px 20px 20px;
   background: var(--surface);
   border: 1px solid var(--hairline);
   border-radius: var(--radius);
@@ -316,91 +375,59 @@ button { font: inherit; color: inherit; }
   background: var(--flag-bg);
 }
 
-.item-top { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 8px 14px; }
-.item-name { font-size: 17px; font-weight: 600; letter-spacing: -0.01em; }
-
-.item-counts {
+.item-top {
   display: flex;
   flex-wrap: wrap;
   align-items: baseline;
-  gap: 10px;
-  margin-top: 8px;
+  justify-content: space-between;
+  gap: 8px 14px;
 }
 
-.count { font-size: 15px; font-variant-numeric: tabular-nums; }
-.count--short { font-weight: 600; }
-.count-note { font-size: 13px; color: var(--ink-2); }
+.item-name {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+  letter-spacing: -0.012em;
+}
 
 .exception {
-  margin: 12px 0 0;
-  font-size: 13px;
-  font-weight: 600;
-  letter-spacing: 0.02em;
+  margin: 10px 0 0;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
   color: var(--flag-ink);
 }
 
-.item-note { margin: 8px 0 0; font-size: 14px; color: var(--ink-2); max-width: 62ch; }
-.item-sub, .item-next { margin: 8px 0 0; font-size: 14px; font-variant-numeric: tabular-nums; }
+.item-note {
+  margin: 16px 0 0;
+  padding-top: 14px;
+  border-top: 1px solid var(--hairline);
+  font-size: 15px;
+  color: var(--ink-2);
+  max-width: 64ch;
+}
 
-.field-label { color: var(--ink-3); }
+.item--exception .item-note { border-top-color: var(--flag-line); }
 
+/* Status reads as words; weight, fill and border style are the second cue, so
+   nothing here depends on color alone. */
 .pill {
-  padding: 3px 10px;
+  padding: 4px 11px;
   border: 1px solid var(--hairline);
   border-radius: 999px;
   background: var(--pill-bg);
   font-size: 13px;
+  font-weight: 500;
   white-space: nowrap;
 }
 
-.pill--on_time { color: var(--ink-2); }
-.pill--arriving_today { color: var(--ink); }
-.pill--delayed { border-color: var(--ink-3); font-weight: 600; }
-.pill--substitute_pending { border-style: dashed; border-color: var(--ink-3); font-weight: 600; }
-.pill--backordered { background: var(--ink); border-color: var(--ink); color: var(--surface); font-weight: 600; }
-
-/* ---------- delivery / order records ---------- */
-
-.records {
-  margin: 0;
-  padding: 0;
-  list-style: none;
-  background: var(--surface);
-  border: 1px solid var(--hairline);
-  border-radius: var(--radius);
-  box-shadow: var(--shadow);
-  overflow: hidden;
-}
-
-.records li {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-  padding: 15px 18px;
-}
-
-.records li + li { border-top: 1px solid var(--hairline); }
-
-.record-main { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
-.record-title { font-size: 16px; font-weight: 500; }
-.record-sub { font-size: 13px; color: var(--ink-2); }
-
-.record-side {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  gap: 3px;
-  font-size: 13px;
-  text-align: right;
-  font-variant-numeric: tabular-nums;
-  white-space: nowrap;
-}
-
-.qty { font-size: 15px; font-weight: 600; }
-.eta { color: var(--ink-2); }
-.eta--today { color: var(--accent); font-weight: 600; }
+.pill--on_par { color: var(--ink-2); }
+.pill--low { border-color: var(--ink-3); color: var(--ink); font-weight: 600; }
+.pill--delivered { border-color: var(--accent); color: var(--accent); background: none; font-weight: 600; }
+.pill--on_way { border-color: var(--ink-3); color: var(--ink); }
+.pill--substitute { border-style: dashed; border-color: var(--ink-3); color: var(--ink); font-weight: 600; }
+.pill--no_substitute { background: var(--ink); border-color: var(--ink); color: var(--surface); font-weight: 700; }
 
 /* ---------- colophon ---------- */
 
@@ -415,6 +442,12 @@ button { font: inherit; color: inherit; }
 
 @media (max-width: 560px) {
   .screen-title { font-size: 26px; }
+
+  /* Two labeled fields per row, and all four tabs without a scroll. */
+  .fields { grid-template-columns: repeat(auto-fit, minmax(128px, 1fr)); gap: 12px 14px; }
+  .item { padding: 16px; }
+  .tabs { gap: 2px; padding: 3px; }
+  .tab { padding: 9px 7px; font-size: 14px; gap: 5px; }
   .list-row { flex-wrap: wrap; }
   .list-main { flex: 1 1 60%; order: 1; }
   .chev { order: 2; }
@@ -426,7 +459,6 @@ button { font: inherit; color: inherit; }
     gap: 10px;
     text-align: left;
   }
-  .records li { align-items: flex-start; }
   .tab { flex: 0 0 auto; }
 }
 </style>
@@ -515,6 +547,12 @@ function formatRelative(date) {
   return `${formatDate(date)} ${formatClock(date)}`
 }
 
+// "3:40 PM" today, "Sep 17, 3:40 PM" otherwise — for use where the label
+// already says what happened.
+function formatRelativeShort(date) {
+  return isToday(date) ? formatClock(date) : `${formatDate(date)} ${formatClock(date)}`
+}
+
 // Expected-next-update text: a clock time for today, a date otherwise.
 function formatWhen(date) {
   return isToday(date) ? `today ${formatClock(date)}` : `${formatDate(date)}, ${formatClock(date)}`
@@ -564,17 +602,16 @@ const CATALOG = {
 }
 
 const STATUS = {
-  backordered: { label: 'Backordered', rank: 0 },
-  delayed: { label: 'Delayed', rank: 1 },
-  substitute_pending: { label: 'Substitute pending', rank: 2 },
-  arriving_today: { label: 'Arriving today', rank: 3 },
-  on_time: { label: 'On time', rank: 4 },
+  no_substitute: { label: 'No substitute', rank: 0 },
+  substitute: { label: 'Substitute on the way', rank: 1 },
+  on_way: { label: 'On the way', rank: 2 },
+  low: { label: 'Low', rank: 3 },
+  delivered: { label: 'Delivered', rank: 4 },
+  on_par: { label: 'On PAR', rank: 5 },
 }
 
-const EXCEPTION = {
-  no_substitute: 'No substitute identified',
-  needs_signoff: 'Substitute needs sign-off',
-}
+// The only thing that still needs a person: backordered with nothing coming.
+const EXCEPTION = 'Backordered — nothing coming'
 
 
 // ---------------------------------------------------------------------------
@@ -590,7 +627,7 @@ const EXCEPTION = {
 
 function buildItem([sku, onHand, extra = {}]) {
   const [name, unit, par] = CATALOG[sku]
-  const status = extra.status ?? 'on_time'
+  const status = extra.status ?? (onHand < par ? 'low' : 'on_par')
   return {
     sku,
     name,
@@ -600,7 +637,7 @@ function buildItem([sku, onHand, extra = {}]) {
     status,
     statusLabel: STATUS[status].label,
     rank: STATUS[status].rank,
-    exception: extra.exception ?? null,
+    exception: status === 'no_substitute',
     note: extra.note ?? null,
     substitute: extra.substitute ?? null,
     next: extra.next ?? { label: 'Next count', at: nextRoutineCount() },
@@ -618,14 +655,38 @@ function buildOrder([sku, qty, min, orderedBy, etaHours]) {
   return { sku, name, unit, qty, placedAt: minutesAgo(min), orderedBy, eta, sameDay: etaHours <= 12 }
 }
 
+// Anything restocked in the last six hours reads as "Delivered" so the shelf
+// state and the delivery log never disagree.
+const RECENT = 6 * 60 * 60 * 1000
+
+function markDelivered(items, deliveries) {
+  return items.map((item) => {
+    if (item.status !== 'on_par' && item.status !== 'low') return item
+    const drop = deliveries.find((d) => d.sku === item.sku && Date.now() - d.at < RECENT)
+    if (!drop) return item
+    return {
+      ...item,
+      onHand: item.par,
+      status: 'delivered',
+      statusLabel: STATUS.delivered.label,
+      rank: STATUS.delivered.rank,
+      next: { label: 'Delivered', text: `${formatRelativeShort(drop.at)} by ${drop.handler}` },
+    }
+  })
+}
+
 function loc(id, name, kind, spec) {
+  const deliveries = spec.deliveries.map(buildDelivery).sort((a, b) => b.at - a.at)
+  const items = markDelivered(spec.items.map(buildItem), deliveries).sort(
+    (a, b) => a.rank - b.rank || a.name.localeCompare(b.name),
+  )
   return {
     id,
     name,
     kind,
     lastCount: { at: minutesAgo(spec.lastCount[0]), handler: spec.lastCount[1] },
-    items: spec.items.map(buildItem).sort((a, b) => a.rank - b.rank || a.name.localeCompare(b.name)),
-    deliveries: spec.deliveries.map(buildDelivery).sort((a, b) => b.at - a.at),
+    items,
+    deliveries,
     orders: spec.orders.map(buildOrder).sort((a, b) => a.eta - b.eta),
   }
 }
@@ -639,20 +700,19 @@ const areas = [
       loc('3west', '3 West — Clean Utility', 'Clean utility', {
         lastCount: [95, 'T. Alvarez'],
         items: [
-          ['gauze4', 14],
-          ['gauze2', 11],
-          ['glovesM', 22],
-          ['underpad', 16],
-          ['saline250', 19],
+          ['gauze4', 21],
+          ['gauze2', 14],
+          ['glovesM', 30],
+          ['underpad', 21],
+          ['saline250', 24],
           ['film475', 2, {
-            status: 'substitute_pending',
-            exception: 'needs_signoff',
-            note: 'Distributor short. Equivalent film dressing is on the shelf but nursing has not signed off on the swap.',
-            substitute: 'Adhesive film dressing 4 x 4.75 (alternate brand) — 6 box on hand',
-            next: { label: 'Sign-off needed by', at: hoursFromNow(5) },
+            status: 'substitute',
+            note: 'Distributor short. Coordinator put the equivalent film dressing on the shelf; the rest ships tomorrow.',
+            substitute: 'Adhesive film dressing 4 x 4.75 — 6 box on hand now',
+            next: { label: 'Substitute ETA', at: hoursFromNow(20) },
           }],
           ['ivkit', 9, {
-            status: 'arriving_today',
+            status: 'on_way',
             note: 'Ordered by charge nurse this morning.',
             next: { label: 'ETA', at: laterToday(3) },
           }],
@@ -671,11 +731,11 @@ const areas = [
         lastCount: [150, 'T. Alvarez'],
         items: [
           ['nonadh', 8],
-          ['gauze4', 17],
-          ['glovesL', 20],
-          ['ace4', 21],
+          ['gauze4', 21],
+          ['glovesL', 24],
+          ['ace4', 24],
           ['mask2', 18],
-          ['cannula', 16],
+          ['cannula', 20],
         ],
         deliveries: [
           ['nonadh', 4, 152, 'T. Alvarez'],
@@ -686,16 +746,16 @@ const areas = [
       loc('5north', '5 North — Clean Utility', 'Clean utility', {
         lastCount: [70, 'M. Reyes'],
         items: [
-          ['glovesM', 26],
+          ['glovesM', 30],
           ['needle21', 4, {
-            status: 'arriving_today',
+            status: 'on_way',
             note: 'Below PAR — replenishment on the afternoon run.',
             next: { label: 'ETA', at: laterToday(1) },
           }],
-          ['syringe3', 10],
-          ['gauze2', 13],
-          ['ekg', 9],
-          ['specimen', 12],
+          ['syringe3', 13],
+          ['gauze2', 14],
+          ['ekg', 12],
+          ['specimen', 16],
         ],
         deliveries: [
           ['glovesM', 12, 72, 'M. Reyes'],
@@ -707,16 +767,15 @@ const areas = [
         lastCount: [230, 'M. Reyes'],
         items: [
           ['feedbag', 3, {
-            status: 'backordered',
-            exception: 'no_substitute',
+            status: 'no_substitute',
             note: 'Manufacturer allocation. Nothing equivalent stocked; roughly 4 days of use on hand.',
             next: { label: 'Vendor update', text: 'no date committed' },
           }],
-          ['ngtube', 5],
-          ['gauze4', 15],
-          ['glovesL', 18],
-          ['underpad', 14],
-          ['saline250', 20],
+          ['ngtube', 8],
+          ['gauze4', 18],
+          ['glovesL', 25],
+          ['underpad', 20],
+          ['saline250', 24],
         ],
         deliveries: [
           ['saline250', 12, 235, 'M. Reyes'],
@@ -735,15 +794,15 @@ const areas = [
         lastCount: [55, 'T. Alvarez'],
         items: [
           ['foley16', 4, {
-            status: 'delayed',
+            status: 'on_way',
             note: 'Carrier delay in transit — arriving tomorrow morning instead of today.',
             next: { label: 'Revised ETA', at: hoursFromNow(21) },
           }],
           ['suction', 10],
-          ['ivkit', 15],
-          ['syringe10', 11],
-          ['chg26', 7],
-          ['gownL', 16],
+          ['ivkit', 18],
+          ['syringe10', 12],
+          ['chg26', 9],
+          ['gownL', 18],
         ],
         deliveries: [
           ['suction', 6, 58, 'T. Alvarez'],
@@ -755,15 +814,15 @@ const areas = [
         lastCount: [40, 'T. Alvarez'],
         items: [
           ['trach', 2, {
-            status: 'delayed',
+            status: 'on_way',
             note: 'Short-shipped from the distributor; balance releases this evening.',
             next: { label: 'Revised ETA', at: hoursFromNow(9) },
           }],
-          ['ngtube', 6],
-          ['suction', 9],
-          ['glovesM', 24],
-          ['gauze4', 16],
-          ['cannula', 18],
+          ['ngtube', 8],
+          ['suction', 13],
+          ['glovesM', 30],
+          ['gauze4', 18],
+          ['cannula', 21],
         ],
         deliveries: [
           ['gauze4', 6, 44, 'T. Alvarez'],
@@ -774,11 +833,11 @@ const areas = [
       loc('pacu', 'PACU — Supply Room', 'Supply room', {
         lastCount: [120, 'M. Reyes'],
         items: [
-          ['saline250', 22],
+          ['saline250', 24],
           ['syringe10', 12],
-          ['gownL', 19],
-          ['ekg', 11],
-          ['mask2', 17],
+          ['gownL', 18],
+          ['ekg', 12],
+          ['mask2', 20],
         ],
         deliveries: [['saline250', 12, 122, 'M. Reyes']],
         orders: [],
@@ -794,15 +853,15 @@ const areas = [
         lastCount: [35, 'M. Reyes'],
         items: [
           ['ivkit', 11, {
-            status: 'arriving_today',
+            status: 'on_way',
             note: 'High use overnight — replenishment on the way.',
             next: { label: 'ETA', at: laterToday(3) },
           }],
-          ['gauze4', 18],
-          ['ace4', 20],
-          ['suture30', 8],
-          ['glovesM', 25],
-          ['edta4', 13],
+          ['gauze4', 21],
+          ['ace4', 22],
+          ['suture30', 10],
+          ['glovesM', 31],
+          ['edta4', 15],
         ],
         deliveries: [
           ['gauze4', 10, 38, 'M. Reyes'],
@@ -814,15 +873,15 @@ const areas = [
         lastCount: [28, 'M. Reyes'],
         items: [
           ['syringe10', 5, {
-            status: 'arriving_today',
+            status: 'on_way',
             note: 'Below PAR after the overnight census.',
             next: { label: 'ETA', at: laterToday(2) },
           }],
           ['needle21', 8],
-          ['edta4', 12],
-          ['specimen', 14],
-          ['mask2', 19],
-          ['glovesL', 21],
+          ['edta4', 16],
+          ['specimen', 15],
+          ['mask2', 20],
+          ['glovesL', 22],
         ],
         deliveries: [
           ['edta4', 8, 30, 'M. Reyes'],
@@ -840,10 +899,10 @@ const areas = [
       loc('or1', 'OR Core — Suite 1', 'Core room', {
         lastCount: [58, 'T. Alvarez'],
         items: [
-          ['gownL', 18],
-          ['gauze4', 19],
-          ['suture30', 9],
-          ['chg26', 8],
+          ['gownL', 20],
+          ['gauze4', 20],
+          ['suture30', 11],
+          ['chg26', 6],
           ['mask2', 20],
         ],
         deliveries: [['gownL', 10, 60, 'T. Alvarez']],
@@ -853,19 +912,19 @@ const areas = [
         lastCount: [45, 'T. Alvarez'],
         items: [
           ['chg26', 3, {
-            status: 'delayed',
+            status: 'on_way',
             note: 'Held at receiving for lot verification.',
             next: { label: 'Revised ETA', at: hoursFromNow(6) },
           }],
           ['suture30', 4, {
-            status: 'backordered',
-            note: 'Approved substitute suture is already stocked at this core — no action needed.',
-            substitute: 'Suture, 3-0 polypropylene — 7 box on hand',
-            next: { label: 'Fill date', at: daysFromNow(9) },
+            status: 'substitute',
+            note: 'Coordinator swapped in polypropylene suture — already on the shelf here.',
+            substitute: 'Suture, 3-0 polypropylene — 7 box on hand now',
+            next: { label: 'Original item fills', at: daysFromNow(9) },
           }],
-          ['gownL', 17],
+          ['gownL', 21],
           ['gauze4', 20],
-          ['glovesM', 23],
+          ['glovesM', 28],
         ],
         deliveries: [['gauze4', 8, 47, 'T. Alvarez']],
         orders: [['chg26', 6, 300, 'J. Pham, RN', 6]],
@@ -873,11 +932,11 @@ const areas = [
       loc('or4', 'OR Core — Suite 4', 'Core room', {
         lastCount: [100, 'M. Reyes'],
         items: [
-          ['suction', 11],
+          ['suction', 13],
           ['gownL', 20],
-          ['saline250', 21],
+          ['saline250', 24],
           ['glovesL', 22],
-          ['mask2', 18],
+          ['mask2', 20],
         ],
         deliveries: [['suction', 6, 102, 'M. Reyes']],
         orders: [],
@@ -893,27 +952,25 @@ const areas = [
         lastCount: [180, 'M. Reyes'],
         items: [
           ['alginate', 1, {
-            status: 'backordered',
-            exception: 'no_substitute',
+            status: 'no_substitute',
             note: 'No fill date from the vendor. Nothing equivalent stocked — materials management is sourcing.',
             next: { label: 'Vendor update', text: `expected ${daysFromNow(2).toLocaleDateString([], { month: 'short', day: 'numeric' })}` },
           }],
           ['hydro44', 2, {
-            status: 'substitute_pending',
-            exception: 'needs_signoff',
-            note: 'Alternate brand offered by the distributor — needs wound care review before it can be ordered.',
-            substitute: 'Hydrocolloid 4x4 (alternate brand) — quoted, not ordered',
-            next: { label: 'Sign-off needed by', at: hoursFromNow(23) },
+            status: 'substitute',
+            note: 'Coordinator ordered the alternate brand from the secondary distributor.',
+            substitute: 'Hydrocolloid 4x4 (alternate brand) — 4 box ordered',
+            next: { label: 'Substitute ETA', at: hoursFromNow(23) },
           }],
           ['npwtsm', 3, {
-            status: 'backordered',
-            note: 'Approved substitute kit already stocked at this PAR — no action needed.',
-            substitute: 'NPWT kit, small (alternate brand) — 4 kit on hand',
-            next: { label: 'Fill date', at: daysFromNow(6) },
+            status: 'substitute',
+            note: 'Coordinator swapped in the alternate kit — on the shelf here now.',
+            substitute: 'NPWT kit, small (alternate brand) — 4 kit on hand now',
+            next: { label: 'Original item fills', at: daysFromNow(6) },
           }],
-          ['nonadh', 9],
-          ['gauze4', 15],
-          ['film475', 7],
+          ['nonadh', 10],
+          ['gauze4', 21],
+          ['film475', 6],
         ],
         deliveries: [
           ['gauze4', 6, 182, 'M. Reyes'],
@@ -924,10 +981,10 @@ const areas = [
       loc('ortho', 'Ortho Clinic — PAR 1', 'Clinic PAR', {
         lastCount: [110, 'M. Reyes'],
         items: [
-          ['ace4', 22],
-          ['gauze4', 16],
+          ['ace4', 24],
+          ['gauze4', 21],
           ['nonadh', 10],
-          ['glovesM', 21],
+          ['glovesM', 28],
         ],
         deliveries: [['ace4', 12, 112, 'M. Reyes']],
         orders: [],
@@ -936,14 +993,14 @@ const areas = [
         lastCount: [135, 'T. Alvarez'],
         items: [
           ['cath14', 6, {
-            status: 'substitute_pending',
-            note: 'Substitute approved by nursing — shipping from an alternate distributor.',
-            substitute: 'Intermittent catheter 14 Fr (alternate brand) — approved',
+            status: 'substitute',
+            note: 'Coordinator ordered the alternate catheter — shipping from the secondary distributor.',
+            substitute: 'Intermittent catheter 14 Fr (alternate brand) — 20 ea ordered',
             next: { label: 'Substitute ETA', at: hoursFromNow(20) },
           }],
-          ['glovesM', 20],
-          ['underpad', 15],
-          ['gauze2', 12],
+          ['glovesM', 31],
+          ['underpad', 20],
+          ['gauze2', 16],
         ],
         deliveries: [['underpad', 6, 138, 'T. Alvarez']],
         orders: [['cath14', 20, 900, 'L. Maher, RN', 20]],
@@ -952,13 +1009,13 @@ const areas = [
         lastCount: [50, 'M. Reyes'],
         items: [
           ['edta4', 9, {
-            status: 'arriving_today',
+            status: 'on_way',
             note: 'Steady draw volume this week; standing order runs daily.',
             next: { label: 'ETA', at: laterToday(4) },
           }],
-          ['needle21', 9],
-          ['specimen', 13],
-          ['glovesM', 19],
+          ['needle21', 8],
+          ['specimen', 15],
+          ['glovesM', 30],
         ],
         deliveries: [['specimen', 8, 52, 'M. Reyes']],
         orders: [['edta4', 15, 60, 'S. Kirby, RN', 4]],
@@ -971,7 +1028,9 @@ const areas = [
 
 function locationSummary(location) {
   const attention = location.items.filter((i) => i.exception)
-  const backordered = location.items.filter((i) => i.status === 'backordered')
+  const backordered = location.items.filter(
+    (i) => i.status === 'no_substitute' || i.status === 'substitute',
+  )
   return {
     items: location.items.length,
     attention: attention.length,
@@ -1005,7 +1064,9 @@ function findLocation(areaId, locationId) {
 }
 
 function backorderItems(location) {
-  return location.items.filter((i) => i.status === 'backordered' || i.status === 'substitute_pending')
+  return location.items.filter(
+    (i) => i.status === 'no_substitute' || i.status === 'substitute',
+  )
 }
 
 
@@ -1066,19 +1127,31 @@ function locationsScreen(area) {
   )
 }
 
+function field(label, value, cls) {
+  return (
+    '<div class="field"><dt class="field-label">' + esc(label) + '</dt>' +
+    '<dd class="field-value' + (cls ? ' ' + cls : '') + '">' + value + '</dd></div>'
+  )
+}
+
 function itemCard(item) {
   var short = item.onHand < item.par
+  var shelf = short
+    ? '<span class="short">' + (item.par - item.onHand) + ' below PAR</span>'
+    : 'At PAR'
   return (
     '<li class="item' + (item.exception ? ' item--exception' : '') + '">' +
-    '<div class="item-top"><span class="item-name">' + esc(item.name) + '</span>' +
+    '<div class="item-top"><h3 class="item-name">' + esc(item.name) + '</h3>' +
     '<span class="pill pill--' + item.status + '">' + item.statusLabel + '</span></div>' +
-    '<div class="item-counts"><span class="count' + (short ? ' count--short' : '') + '">' +
-    item.onHand + ' of ' + item.par + ' ' + item.unit + '</span>' +
-    '<span class="count-note">' + (short ? item.par - item.onHand + ' below PAR' : 'at PAR') + '</span></div>' +
-    (item.exception ? '<p class="exception">' + esc(EXCEPTION[item.exception]) + '</p>' : '') +
+    (item.exception ? '<p class="exception">' + esc(EXCEPTION) + '</p>' : '') +
+    '<dl class="fields">' +
+    field('On hand', item.onHand + ' ' + item.unit) +
+    field('PAR level', item.par + ' ' + item.unit) +
+    field('Shelf', shelf) +
+    field(item.next.label, esc(nextText(item.next))) +
+    '</dl>' +
+    (item.substitute ? '<dl class="fields fields--wide">' + field('Substitute', esc(item.substitute)) + '</dl>' : '') +
     (item.note ? '<p class="item-note">' + esc(item.note) + '</p>' : '') +
-    (item.substitute ? '<p class="item-sub"><span class="field-label">Substitute</span> ' + esc(item.substitute) + '</p>' : '') +
-    '<p class="item-next"><span class="field-label">' + esc(item.next.label) + '</span> ' + esc(nextText(item.next)) + '</p>' +
     '</li>'
   )
 }
@@ -1092,17 +1165,17 @@ function deliveriesPanel(location) {
   var rows = location.deliveries
     .map(function (d) {
       return (
-        '<li><span class="record-main"><span class="record-title">' + esc(d.name) + '</span>' +
-        '<span class="record-sub">Stocked by ' + esc(d.handler) + '</span></span>' +
-        '<span class="record-side"><span class="qty">+' + d.qty + ' ' + d.unit + '</span>' +
-        '<span class="muted">' + formatRelative(d.at) + '</span></span></li>'
+        '<li class="item"><div class="item-top"><h3 class="item-name">' + esc(d.name) + '</h3>' +
+        '<span class="pill pill--delivered">Delivered</span></div>' +
+        '<dl class="fields">' +
+        field('Quantity', d.qty + ' ' + d.unit) +
+        field('Delivered', formatRelative(d.at)) +
+        field('Stocked by', esc(d.handler)) +
+        '</dl></li>'
       )
     })
     .join('')
-  return (
-    '<p class="panel-note">Last PAR count ' + formatRelative(location.lastCount.at) + ' by ' + esc(location.lastCount.handler) + '.</p>' +
-    '<ul class="records">' + rows + '</ul>'
-  )
+  return '<ul class="items">' + rows + '</ul>'
 }
 
 function ordersPanel(location) {
@@ -1110,14 +1183,18 @@ function ordersPanel(location) {
   var rows = location.orders
     .map(function (o) {
       return (
-        '<li><span class="record-main"><span class="record-title">' + esc(o.name) + '</span>' +
-        '<span class="record-sub">Ordered by ' + esc(o.orderedBy) + ' · ' + formatRelative(o.placedAt) + '</span></span>' +
-        '<span class="record-side"><span class="qty">' + o.qty + ' ' + o.unit + '</span>' +
-        '<span class="' + (o.sameDay ? 'eta eta--today' : 'eta') + '">' + (o.sameDay ? 'Arrives ' : 'ETA ') + formatWhen(o.eta) + '</span></span></li>'
+        '<li class="item"><div class="item-top"><h3 class="item-name">' + esc(o.name) + '</h3>' +
+        '<span class="pill pill--on_way">On the way</span></div>' +
+        '<dl class="fields">' +
+        field('Quantity', o.qty + ' ' + o.unit) +
+        field('Ordered by', esc(o.orderedBy)) +
+        field('Placed', formatRelative(o.placedAt)) +
+        field(o.sameDay ? 'Arrives' : 'ETA', '<span class="' + (o.sameDay ? 'soon' : '') + '">' + formatWhen(o.eta) + '</span>') +
+        '</dl></li>'
       )
     })
     .join('')
-  return '<ul class="records">' + rows + '</ul>'
+  return '<ul class="items">' + rows + '</ul>'
 }
 
 function backorderPanel(items) {
@@ -1125,7 +1202,16 @@ function backorderPanel(items) {
   return '<ul class="items">' + items.map(itemCard).join('') + '</ul>'
 }
 
+function stat(label, value, note) {
+  return (
+    '<div class="stat"><dt class="field-label">' + esc(label) + '</dt>' +
+    '<dd class="stat-value">' + esc(value) + '</dd>' +
+    '<dd class="stat-note">' + esc(note) + '</dd></div>'
+  )
+}
+
 function detailScreen(location) {
+  var summary = locationSummary(location)
   var backorders = backorderItems(location)
   var counts = {
     items: location.items.length,
@@ -1149,7 +1235,13 @@ function detailScreen(location) {
 
   return (
     '<h2 class="screen-title">' + esc(location.name) + '</h2>' +
-    '<p class="screen-sub">' + esc(location.kind) + ' · counted ' + formatRelative(location.lastCount.at) + ' by ' + esc(location.lastCount.handler) + '</p>' +
+    '<p class="screen-sub">' + esc(location.kind) + '</p>' +
+    '<dl class="stats">' +
+    stat('Last PAR count', formatClock(location.lastCount.at), formatRelative(location.lastCount.at)) +
+    stat('Counted by', location.lastCount.handler, 'Supply handler') +
+    stat('Items counted', String(summary.items), summary.belowPar + ' below PAR') +
+    stat('Needs attention', String(summary.attention), summary.attention === 0 ? 'Nothing stuck' : 'No substitute yet') +
+    '</dl>' +
     '<div class="tabs" role="tablist" aria-label="Location views">' + tabs + '</div>' +
     '<div class="panel" id="panel" role="tabpanel" aria-labelledby="tab-' + state.tab + '">' + body + '</div>'
   )

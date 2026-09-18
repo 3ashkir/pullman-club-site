@@ -5,8 +5,15 @@ function nextText(next) {
   return next.text ? next.text : formatWhen(next.at)
 }
 
-function StatusPill({ item }) {
-  return <span className={'pill pill--' + item.status}>{item.statusLabel}</span>
+// Every value on this screen carries its own label — nothing is left to
+// guesswork about what a number means.
+function Field({ label, children }) {
+  return (
+    <div className="field">
+      <dt className="field-label">{label}</dt>
+      <dd className="field-value">{children}</dd>
+    </div>
+  )
 }
 
 function ItemCard({ item }) {
@@ -14,28 +21,36 @@ function ItemCard({ item }) {
   return (
     <li className={'item' + (item.exception ? ' item--exception' : '')}>
       <div className="item-top">
-        <span className="item-name">{item.name}</span>
-        <StatusPill item={item} />
+        <h3 className="item-name">{item.name}</h3>
+        <span className={'pill pill--' + item.status}>{item.statusLabel}</span>
       </div>
 
-      <div className="item-counts">
-        <span className={'count' + (short ? ' count--short' : '')}>
-          {item.onHand} of {item.par} {item.unit}
-        </span>
-        <span className="count-note">{short ? `${item.par - item.onHand} below PAR` : 'at PAR'}</span>
-      </div>
+      {item.exception && <p className="exception">{EXCEPTION}</p>}
 
-      {item.exception && <p className="exception">{EXCEPTION[item.exception]}</p>}
-      {item.note && <p className="item-note">{item.note}</p>}
+      <dl className="fields">
+        <Field label="On hand">
+          {item.onHand} {item.unit}
+        </Field>
+        <Field label="PAR level">
+          {item.par} {item.unit}
+        </Field>
+        <Field label="Shelf">
+          {short ? (
+            <span className="short">{item.par - item.onHand} below PAR</span>
+          ) : (
+            'At PAR'
+          )}
+        </Field>
+        <Field label={item.next.label}>{nextText(item.next)}</Field>
+      </dl>
+
       {item.substitute && (
-        <p className="item-sub">
-          <span className="field-label">Substitute</span> {item.substitute}
-        </p>
+        <dl className="fields fields--wide">
+          <Field label="Substitute">{item.substitute}</Field>
+        </dl>
       )}
 
-      <p className="item-next">
-        <span className="field-label">{item.next.label}</span> {nextText(item.next)}
-      </p>
+      {item.note && <p className="item-note">{item.note}</p>}
     </li>
   )
 }
@@ -56,27 +71,23 @@ export function DeliveriesPanel({ location }) {
   }
 
   return (
-    <>
-      <p className="panel-note">
-        Last PAR count {formatRelative(location.lastCount.at)} by {location.lastCount.handler}.
-      </p>
-      <ul className="records">
-        {location.deliveries.map((d, i) => (
-          <li key={d.sku + i}>
-            <span className="record-main">
-              <span className="record-title">{d.name}</span>
-              <span className="record-sub">Stocked by {d.handler}</span>
-            </span>
-            <span className="record-side">
-              <span className="qty">
-                +{d.qty} {d.unit}
-              </span>
-              <span className="muted">{formatRelative(d.at)}</span>
-            </span>
-          </li>
-        ))}
-      </ul>
-    </>
+    <ul className="items">
+      {location.deliveries.map((d, i) => (
+        <li className="item" key={d.sku + i}>
+          <div className="item-top">
+            <h3 className="item-name">{d.name}</h3>
+            <span className="pill pill--delivered">Delivered</span>
+          </div>
+          <dl className="fields">
+            <Field label="Quantity">
+              {d.qty} {d.unit}
+            </Field>
+            <Field label="Delivered">{formatRelative(d.at)}</Field>
+            <Field label="Stocked by">{d.handler}</Field>
+          </dl>
+        </li>
+      ))}
+    </ul>
   )
 }
 
@@ -86,24 +97,23 @@ export function OrdersPanel({ location }) {
   }
 
   return (
-    <ul className="records">
+    <ul className="items">
       {location.orders.map((o, i) => (
-        <li key={o.sku + i}>
-          <span className="record-main">
-            <span className="record-title">{o.name}</span>
-            <span className="record-sub">
-              Ordered by {o.orderedBy} · {formatRelative(o.placedAt)}
-            </span>
-          </span>
-          <span className="record-side">
-            <span className="qty">
+        <li className="item" key={o.sku + i}>
+          <div className="item-top">
+            <h3 className="item-name">{o.name}</h3>
+            <span className="pill pill--on_way">On the way</span>
+          </div>
+          <dl className="fields">
+            <Field label="Quantity">
               {o.qty} {o.unit}
-            </span>
-            <span className={o.sameDay ? 'eta eta--today' : 'eta'}>
-              {o.sameDay ? 'Arrives ' : 'ETA '}
-              {formatWhen(o.eta)}
-            </span>
-          </span>
+            </Field>
+            <Field label="Ordered by">{o.orderedBy}</Field>
+            <Field label="Placed">{formatRelative(o.placedAt)}</Field>
+            <Field label={o.sameDay ? 'Arrives' : 'ETA'}>
+              <span className={o.sameDay ? 'soon' : undefined}>{formatWhen(o.eta)}</span>
+            </Field>
+          </dl>
         </li>
       ))}
     </ul>
