@@ -27,6 +27,17 @@ export function daysFromNow(days, hour = 9) {
   return d
 }
 
+// Routine PAR counts run twice a day, at 07:00 and 14:00.
+export function nextRoutineCount() {
+  const now = new Date()
+  for (const hour of [7, 14]) {
+    const slot = new Date(now)
+    slot.setHours(hour, 0, 0, 0)
+    if (slot > now) return slot
+  }
+  return daysFromNow(1, 7)
+}
+
 export function formatClock(date) {
   return date.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' })
 }

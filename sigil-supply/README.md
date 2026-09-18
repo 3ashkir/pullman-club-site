@@ -1,82 +1,90 @@
 # Sigil Supply — demo dashboard
 
-A read-only status feed for hospital PAR locations. The point of the demo is
-status visibility: a nurse or supply tech can see where every item stands
-without calling anyone. There are no buttons or actions on routine items.
+A read-only supply status app for hospital PAR locations. The point of the demo
+is status visibility: anyone can see where an item stands without calling
+materials management. Nothing here is editable — no orders are placed, no
+counts are entered.
 
 Sample data only — no backend, no database, no network calls.
+
+## The three taps
+
+```
+Areas  →  Locations in that area  →  One location, four tabs
+```
+
+1. **Areas** — Med/Surg, Critical Care, Emergency, Perioperative, Clinics &
+   Ancillary. Each card shows how many locations and open orders it has, and
+   flags anything that needs attention.
+2. **Locations** — the PAR rooms in that area, each with its last PAR count
+   (when, and which handler did it).
+3. **Location** — four tabs:
+
+| Tab | What it answers |
+| --- | --- |
+| Items | Everything tracked here: on-hand vs PAR, status, what happens next |
+| Delivered | What the supply handler stocked, with quantities and times |
+| Orders | What the charge nurse ordered, who ordered it, and when it lands |
+| Backorder | Backordered and substitute-pending items, with substitute status |
+
+Anything that needs a person — backordered with no substitute identified, or a
+substitute waiting on clinical sign-off — is marked in three ways that do not
+rely on color: a tinted chip that counts them on the area and location screens,
+a heavier left border on the item card, and an all-caps line naming the reason.
+
+## Statuses
+
+| Status | Meaning |
+| --- | --- |
+| Backordered | Vendor cannot fill; watch the fill date or the substitute |
+| Delayed | Shipped but late; revised ETA shown |
+| Substitute pending | An alternate item is in play |
+| Arriving today | On the truck, ETA today |
+| On time | Nothing to watch; next scheduled PAR count shown |
+
+Items sort by status urgency within a location, so whatever needs watching sits
+at the top of the Items tab.
 
 ## Running it
 
 ```
 cd sigil-supply
 npm install
-npm run dev
+npm run dev        # vite dev server, prints a local URL
+npm run build      # static bundle in dist/
+npm run standalone # regenerates standalone/index.html
 ```
 
-Vite prints a local URL (default http://localhost:5173). `npm run build`
-produces a static bundle in `dist/` that can be served from anywhere.
-
-## What the view shows
-
-Every row carries five fields: item name, PAR location, current status, last
-updated time, and expected next update (an ETA, a backorder fill date, or a
-sign-off deadline).
-
-Statuses, in the order the feed sorts them (most urgent first):
-
-| Status | Meaning |
-| --- | --- |
-| Backordered | Vendor cannot fill; watch the fill date or substitute |
-| Delayed | Shipped but late; revised ETA shown |
-| Substitute pending | An alternate item is in play |
-| Arriving today | On the truck, ETA today |
-| On time | Nothing to watch; next scheduled check shown |
-
-Within a status, the most recently updated item sorts first, so the feed reads
-top-down like a running status board.
-
-## Exceptions
-
-Two situations need a human and are pulled into a **Needs attention** section
-at the top of the page:
-
-- backordered with no substitute identified
-- a substitute waiting on clinical sign-off
-
-They are separated structurally, not by color: their own section and heading, a
-heavy left rule on the group, a tinted row background, and an all-caps label on
-the row naming the reason. The demo still reads correctly in grayscale or for a
-color-blind viewer.
-
-## Filters
-
-`All` / `Needs attention` / `Arriving today`, with live counts. The filter only
-changes which sections and rows are visible — nothing is editable.
-
-## Layout
-
-Five-column table on desktop; below 820px each row becomes a stacked card with
-field labels. No animation, no imagery.
+`standalone/index.html` is the whole demo inlined into one file with no
+dependencies — open it by double-clicking, or host it anywhere. It is generated
+from the same data, formatting and stylesheet as the React app by
+`tools/standalone.mjs`; edit `src/`, then re-run `npm run standalone`.
 
 ## Files
 
 ```
 src/
-  main.jsx               React entry point
-  App.jsx                page shell, filter state, section layout
-  styles.css             all styling (plain CSS, no framework)
+  main.jsx                 React entry point
+  App.jsx                  navigation state: area → location → tab
+  styles.css               all styling (plain CSS, no framework)
   components/
-    FilterBar.jsx        All / Needs attention / Arriving today toggle
-    ItemList.jsx         table header + row list
-    ItemRow.jsx          one supply item
+    Crumbs.jsx             back control and trail
+    AreaGrid.jsx           screen 1
+    LocationList.jsx       screen 2
+    LocationDetail.jsx     screen 3, tab bar
+    panels.jsx             Items / Delivered / Orders / Backorder panels
   data/
-    parItems.js          20 sample PAR items, status vocabulary, exception reasons
+    catalog.js             supply catalog, status vocabulary, exception reasons
+    hospital.js            16 PAR locations across 5 areas, with items,
+                           deliveries and orders
   utils/
-    sort.js              urgency sort + exception/routine split
-    time.js              relative and clock-time formatting
+    time.js                relative and clock-time formatting
+    text.js                plural-aware counts
+tools/
+  standalone.mjs           builds standalone/index.html from src/
 ```
 
-To change what the demo shows, edit `src/data/parItems.js`. Timestamps are
-generated relative to page load (`minutesAgo(41)`, `hoursFromNow(3)`), so the
-feed always looks current whenever the demo is opened.
+To change what the demo shows, edit `src/data/hospital.js`. Items, deliveries
+and orders are written as short tuples and expanded by the builders at the top
+of that file. Timestamps are generated relative to page load, so the demo always
+looks current.

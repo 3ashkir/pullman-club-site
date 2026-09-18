@@ -1,0 +1,1197 @@
+<title>Sigil Supply PAR Rooms</title>
+<meta charset="utf-8">
+<style>
+/* Sigil Supply — calm, roomy, one thing per screen. */
+
+:root {
+  --bg: #f5f5f7;
+  --surface: #ffffff;
+  --surface-sunk: #ececf0;
+  --ink: #1d1d1f;
+  --ink-2: #6e6e73;
+  --ink-3: #8e8e93;
+  --hairline: #d9d9de;
+  --accent: #0a6b6e;
+  --flag-ink: #7a4310;
+  --flag-bg: #fbf0e2;
+  --flag-line: #e2c49c;
+  --pill-bg: #ececf0;
+  --shadow: 0 1px 2px rgba(0, 0, 0, 0.05), 0 8px 24px rgba(0, 0, 0, 0.04);
+  --radius: 14px;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    --bg: #000000;
+    --surface: #1c1c1e;
+    --surface-sunk: #2c2c2e;
+    --ink: #f5f5f7;
+    --ink-2: #a1a1a6;
+    --ink-3: #8a8a8f;
+    --hairline: #38383a;
+    --accent: #5cb8bb;
+    --flag-ink: #f0c08a;
+    --flag-bg: #2a2118;
+    --flag-line: #5a4529;
+    --pill-bg: #2c2c2e;
+    --shadow: none;
+  }
+}
+
+:root[data-theme='dark'] {
+  --bg: #000000;
+  --surface: #1c1c1e;
+  --surface-sunk: #2c2c2e;
+  --ink: #f5f5f7;
+  --ink-2: #a1a1a6;
+  --ink-3: #8a8a8f;
+  --hairline: #38383a;
+  --accent: #5cb8bb;
+  --flag-ink: #f0c08a;
+  --flag-bg: #2a2118;
+  --flag-line: #5a4529;
+  --pill-bg: #2c2c2e;
+  --shadow: none;
+}
+
+* { box-sizing: border-box; }
+
+html, body { margin: 0; padding: 0; }
+
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  font-size: 16px;
+  line-height: 1.45;
+  -webkit-font-smoothing: antialiased;
+}
+
+button { font: inherit; color: inherit; }
+
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 6px; }
+
+.app {
+  max-width: 820px;
+  margin: 0 auto;
+  padding-inline: 20px;
+  padding-block: 28px 64px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+/* ---------- masthead ---------- */
+
+.masthead {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 4px 20px;
+}
+
+.wordmark {
+  margin: 0;
+  font-size: 19px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+.tagline { margin: 2px 0 0; color: var(--ink-2); font-size: 14px; }
+
+.asof {
+  margin: 0;
+  font-size: 13px;
+  color: var(--ink-3);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---------- breadcrumb ---------- */
+
+.crumbs { display: flex; flex-direction: column; gap: 10px; }
+
+.back {
+  align-self: flex-start;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--accent);
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.back span { margin-right: 2px; font-size: 19px; line-height: 1; }
+
+.crumbs ol {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: 13px;
+  color: var(--ink-3);
+}
+
+.crumbs li + li::before { content: '/'; margin-right: 8px; color: var(--hairline); }
+.crumbs li[aria-current='page'] { color: var(--ink-2); }
+
+/* ---------- screen headings ---------- */
+
+.screen-title {
+  margin: 0;
+  font-size: 30px;
+  font-weight: 700;
+  letter-spacing: -0.021em;
+  text-wrap: balance;
+}
+
+.screen-sub { margin: 4px 0 0; color: var(--ink-2); font-size: 15px; }
+
+/* ---------- area cards ---------- */
+
+.cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 14px;
+  margin: 22px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+  height: 100%;
+  padding: 20px;
+  text-align: left;
+  background: var(--surface);
+  border: 1px solid var(--hairline);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  cursor: pointer;
+}
+
+.card-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.card-title { font-size: 19px; font-weight: 600; letter-spacing: -0.01em; }
+.card-blurb { color: var(--ink-2); font-size: 14px; }
+
+.card-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 14px;
+  margin-top: auto;
+  padding-top: 4px;
+  font-size: 13px;
+  color: var(--ink-3);
+  font-variant-numeric: tabular-nums;
+}
+
+.chev { color: var(--ink-3); font-size: 22px; line-height: 1; }
+
+/* ---------- location list ---------- */
+
+.rows-list {
+  margin: 22px 0 0;
+  padding: 0;
+  list-style: none;
+  background: var(--surface);
+  border: 1px solid var(--hairline);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+}
+
+.rows-list li + li { border-top: 1px solid var(--hairline); }
+
+.list-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  width: 100%;
+  min-height: 68px;
+  padding: 14px 18px;
+  text-align: left;
+  background: none;
+  border: 0;
+  cursor: pointer;
+}
+
+.list-main { display: flex; flex-direction: column; gap: 3px; flex: 1 1 auto; min-width: 0; }
+.list-title { font-size: 17px; font-weight: 500; letter-spacing: -0.01em; }
+.list-sub { font-size: 13px; color: var(--ink-2); }
+
+.list-side {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4px;
+  font-size: 13px;
+  text-align: right;
+}
+
+.muted { color: var(--ink-3); font-variant-numeric: tabular-nums; }
+
+/* Attention is carried by a word, a tinted chip and a border — never color alone. */
+.flag {
+  padding: 2px 9px;
+  border: 1px solid var(--flag-line);
+  border-radius: 999px;
+  background: var(--flag-bg);
+  color: var(--flag-ink);
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+/* ---------- tabs ---------- */
+
+.tabs {
+  display: flex;
+  gap: 4px;
+  margin-top: 22px;
+  padding: 4px;
+  background: var(--surface-sunk);
+  border-radius: 11px;
+  overflow-x: auto;
+}
+
+.tab {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  flex: 1 1 auto;
+  justify-content: center;
+  padding: 9px 12px;
+  border: 0;
+  border-radius: 8px;
+  background: none;
+  color: var(--ink-2);
+  font-size: 15px;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.tab.is-on {
+  background: var(--surface);
+  color: var(--ink);
+  font-weight: 600;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
+}
+
+.tab-count { font-size: 12px; color: var(--ink-3); font-variant-numeric: tabular-nums; }
+
+.panel { margin-top: 20px; }
+
+.panel-note { margin: 0 0 14px; font-size: 14px; color: var(--ink-2); }
+
+.empty {
+  margin: 0;
+  padding: 28px 20px;
+  background: var(--surface);
+  border: 1px solid var(--hairline);
+  border-radius: var(--radius);
+  color: var(--ink-2);
+  text-align: center;
+}
+
+/* ---------- item cards ---------- */
+
+.items { display: flex; flex-direction: column; gap: 12px; margin: 0; padding: 0; list-style: none; }
+
+.item {
+  padding: 18px 20px;
+  background: var(--surface);
+  border: 1px solid var(--hairline);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+}
+
+.item--exception {
+  border-color: var(--flag-line);
+  border-left-width: 4px;
+  background: var(--flag-bg);
+}
+
+.item-top { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 8px 14px; }
+.item-name { font-size: 17px; font-weight: 600; letter-spacing: -0.01em; }
+
+.item-counts {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 10px;
+  margin-top: 8px;
+}
+
+.count { font-size: 15px; font-variant-numeric: tabular-nums; }
+.count--short { font-weight: 600; }
+.count-note { font-size: 13px; color: var(--ink-2); }
+
+.exception {
+  margin: 12px 0 0;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: var(--flag-ink);
+}
+
+.item-note { margin: 8px 0 0; font-size: 14px; color: var(--ink-2); max-width: 62ch; }
+.item-sub, .item-next { margin: 8px 0 0; font-size: 14px; font-variant-numeric: tabular-nums; }
+
+.field-label { color: var(--ink-3); }
+
+.pill {
+  padding: 3px 10px;
+  border: 1px solid var(--hairline);
+  border-radius: 999px;
+  background: var(--pill-bg);
+  font-size: 13px;
+  white-space: nowrap;
+}
+
+.pill--on_time { color: var(--ink-2); }
+.pill--arriving_today { color: var(--ink); }
+.pill--delayed { border-color: var(--ink-3); font-weight: 600; }
+.pill--substitute_pending { border-style: dashed; border-color: var(--ink-3); font-weight: 600; }
+.pill--backordered { background: var(--ink); border-color: var(--ink); color: var(--surface); font-weight: 600; }
+
+/* ---------- delivery / order records ---------- */
+
+.records {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  background: var(--surface);
+  border: 1px solid var(--hairline);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+}
+
+.records li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 15px 18px;
+}
+
+.records li + li { border-top: 1px solid var(--hairline); }
+
+.record-main { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+.record-title { font-size: 16px; font-weight: 500; }
+.record-sub { font-size: 13px; color: var(--ink-2); }
+
+.record-side {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 3px;
+  font-size: 13px;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.qty { font-size: 15px; font-weight: 600; }
+.eta { color: var(--ink-2); }
+.eta--today { color: var(--accent); font-weight: 600; }
+
+/* ---------- colophon ---------- */
+
+.colophon {
+  padding-top: 18px;
+  border-top: 1px solid var(--hairline);
+  font-size: 13px;
+  color: var(--ink-3);
+}
+
+/* ---------- phone ---------- */
+
+@media (max-width: 560px) {
+  .screen-title { font-size: 26px; }
+  .list-row { flex-wrap: wrap; }
+  .list-main { flex: 1 1 60%; order: 1; }
+  .chev { order: 2; }
+  .list-side {
+    order: 3;
+    flex: 1 0 100%;
+    flex-direction: row;
+    align-items: center;
+    gap: 10px;
+    text-align: left;
+  }
+  .records li { align-items: flex-start; }
+  .tab { flex: 0 0 auto; }
+}
+</style>
+
+<div class="app">
+  <header class="masthead">
+    <div>
+      <p class="wordmark">Sigil Supply</p>
+      <p class="tagline">Where every item stands, without calling anyone.</p>
+    </div>
+    <p class="asof" id="asof"></p>
+  </header>
+
+  <nav class="crumbs" id="crumbs" aria-label="Breadcrumb"></nav>
+
+  <main id="screen"></main>
+
+  <footer class="colophon">Sample data for demonstration. Times are generated when the page loads.</footer>
+</div>
+
+<script>
+// Formatting helpers. Everything is derived from Date objects so the demo
+// reads as "live" whenever it is opened.
+
+const MINUTE = 60 * 1000
+const HOUR = 60 * MINUTE
+
+function minutesAgo(min) {
+  return new Date(Date.now() - min * MINUTE)
+}
+
+function hoursFromNow(hrs) {
+  return new Date(Date.now() + hrs * HOUR)
+}
+
+// Same as hoursFromNow, but never rolls past tonight — used for items whose
+// status says "arriving today".
+function laterToday(hrs) {
+  const target = hoursFromNow(hrs)
+  const endOfDay = new Date()
+  endOfDay.setHours(23, 30, 0, 0)
+  return target > endOfDay ? endOfDay : target
+}
+
+function daysFromNow(days, hour = 9) {
+  const d = new Date(Date.now() + days * 24 * HOUR)
+  d.setHours(hour, 0, 0, 0)
+  return d
+}
+
+// Routine PAR counts run twice a day, at 07:00 and 14:00.
+function nextRoutineCount() {
+  const now = new Date()
+  for (const hour of [7, 14]) {
+    const slot = new Date(now)
+    slot.setHours(hour, 0, 0, 0)
+    if (slot > now) return slot
+  }
+  return daysFromNow(1, 7)
+}
+
+function formatClock(date) {
+  return date.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' })
+}
+
+function formatDate(date) {
+  return date.toLocaleDateString([], { month: 'short', day: 'numeric' })
+}
+
+function isToday(date) {
+  const now = new Date()
+  return (
+    date.getDate() === now.getDate() &&
+    date.getMonth() === now.getMonth() &&
+    date.getFullYear() === now.getFullYear()
+  )
+}
+
+// "14 min ago", "3 hr ago", "Yesterday 4:10 PM"
+function formatRelative(date) {
+  const diff = Date.now() - date.getTime()
+  if (diff < MINUTE) return 'just now'
+  if (diff < HOUR) return `${Math.round(diff / MINUTE)} min ago`
+  if (diff < 12 * HOUR) return `${Math.round(diff / HOUR)} hr ago`
+  if (isToday(date)) return `today ${formatClock(date)}`
+  return `${formatDate(date)} ${formatClock(date)}`
+}
+
+// Expected-next-update text: a clock time for today, a date otherwise.
+function formatWhen(date) {
+  return isToday(date) ? `today ${formatClock(date)}` : `${formatDate(date)}, ${formatClock(date)}`
+}
+
+// Small wording helpers so counts read like English, not like a database.
+function count(n, singular, plural = singular + 's') {
+  return n + ' ' + (n === 1 ? singular : plural)
+}
+
+function attention(n) {
+  return n + (n === 1 ? ' needs attention' : ' need attention')
+}
+
+// Supply catalog. [name, unit of issue, PAR level]
+const CATALOG = {
+  gauze4: ['Sterile Gauze Sponge 4x4, 12-ply', 'pkg', 20],
+  gauze2: ['Sterile Gauze Sponge 2x2', 'pkg', 16],
+  film475: ['Transparent Film Dressing 4 x 4.75', 'box', 8],
+  hydro44: ['Hydrocolloid Dressing 4x4', 'box', 6],
+  alginate: ['Silver Alginate Dressing 4x4', 'box', 6],
+  npwtsm: ['Negative Pressure Wound Kit, Small', 'kit', 4],
+  nonadh: ['Non-Adherent Pad 3x4', 'box', 10],
+  ace4: ['Elastic Bandage, 4 in', 'ea', 24],
+  foley16: ['Foley Catheter Kit, 16 Fr', 'kit', 10],
+  cath14: ['Straight Intermittent Catheter, 14 Fr', 'ea', 20],
+  trach: ['Tracheostomy Care Kit', 'kit', 6],
+  suction: ['Suction Canister, 1200 mL', 'ea', 12],
+  ivkit: ['IV Start Kit with Chlorhexidine', 'kit', 18],
+  syringe10: ['Luer-Lock Syringe, 10 mL', 'box', 12],
+  syringe3: ['Luer-Lock Syringe, 3 mL', 'box', 12],
+  needle21: ['Safety Hypodermic Needle, 21G x 1 in', 'box', 10],
+  saline250: ['Sterile Saline Irrigation, 250 mL', 'ea', 24],
+  chg26: ['Chlorhexidine Prep Applicator, 26 mL', 'box', 8],
+  glovesM: ['Nitrile Exam Gloves, Medium', 'box', 30],
+  glovesL: ['Nitrile Exam Gloves, Large', 'box', 24],
+  gownL: ['Sterile Surgical Gown, Large', 'ea', 20],
+  edta4: ['Blood Collection Tube, EDTA 4 mL', 'pkg', 15],
+  feedbag: ['Enteral Feeding Bag Set, 1200 mL', 'ea', 12],
+  underpad: ['Underpad 30x36', 'pkg', 20],
+  specimen: ['Specimen Container, 120 mL', 'pkg', 15],
+  suture30: ['Suture, 3-0 Nylon', 'box', 10],
+  mask2: ['Procedure Mask, Level 2', 'box', 20],
+  ekg: ['ECG Electrodes, Adult', 'pkg', 12],
+  ngtube: ['NG Tube, 16 Fr', 'ea', 8],
+  cannula: ['Nasal Cannula, Adult', 'ea', 20],
+}
+
+const STATUS = {
+  backordered: { label: 'Backordered', rank: 0 },
+  delayed: { label: 'Delayed', rank: 1 },
+  substitute_pending: { label: 'Substitute pending', rank: 2 },
+  arriving_today: { label: 'Arriving today', rank: 3 },
+  on_time: { label: 'On time', rank: 4 },
+}
+
+const EXCEPTION = {
+  no_substitute: 'No substitute identified',
+  needs_signoff: 'Substitute needs sign-off',
+}
+
+
+// ---------------------------------------------------------------------------
+// Sample data, written as compact tuples and expanded by the builders below.
+//
+//   item      [sku, onHand, extra?]
+//   delivery  [sku, qty, minutesAgo, handler]
+//   order     [sku, qty, minutesAgo, orderedBy, etaHours]
+//
+// `extra` carries anything that is not routine: status, exception, note, and
+// the expected next update.
+// ---------------------------------------------------------------------------
+
+function buildItem([sku, onHand, extra = {}]) {
+  const [name, unit, par] = CATALOG[sku]
+  const status = extra.status ?? 'on_time'
+  return {
+    sku,
+    name,
+    unit,
+    par,
+    onHand,
+    status,
+    statusLabel: STATUS[status].label,
+    rank: STATUS[status].rank,
+    exception: extra.exception ?? null,
+    note: extra.note ?? null,
+    substitute: extra.substitute ?? null,
+    next: extra.next ?? { label: 'Next count', at: nextRoutineCount() },
+  }
+}
+
+function buildDelivery([sku, qty, min, handler]) {
+  const [name, unit] = CATALOG[sku]
+  return { sku, name, unit, qty, at: minutesAgo(min), handler }
+}
+
+function buildOrder([sku, qty, min, orderedBy, etaHours]) {
+  const [name, unit] = CATALOG[sku]
+  const eta = etaHours <= 12 ? laterToday(etaHours) : hoursFromNow(etaHours)
+  return { sku, name, unit, qty, placedAt: minutesAgo(min), orderedBy, eta, sameDay: etaHours <= 12 }
+}
+
+function loc(id, name, kind, spec) {
+  return {
+    id,
+    name,
+    kind,
+    lastCount: { at: minutesAgo(spec.lastCount[0]), handler: spec.lastCount[1] },
+    items: spec.items.map(buildItem).sort((a, b) => a.rank - b.rank || a.name.localeCompare(b.name)),
+    deliveries: spec.deliveries.map(buildDelivery).sort((a, b) => b.at - a.at),
+    orders: spec.orders.map(buildOrder).sort((a, b) => a.eta - b.eta),
+  }
+}
+
+const areas = [
+  {
+    id: 'medsurg',
+    name: 'Med/Surg',
+    blurb: 'Clean utility rooms, 3 West through 6 East',
+    locations: [
+      loc('3west', '3 West — Clean Utility', 'Clean utility', {
+        lastCount: [95, 'T. Alvarez'],
+        items: [
+          ['gauze4', 14],
+          ['gauze2', 11],
+          ['glovesM', 22],
+          ['underpad', 16],
+          ['saline250', 19],
+          ['film475', 2, {
+            status: 'substitute_pending',
+            exception: 'needs_signoff',
+            note: 'Distributor short. Equivalent film dressing is on the shelf but nursing has not signed off on the swap.',
+            substitute: 'Adhesive film dressing 4 x 4.75 (alternate brand) — 6 box on hand',
+            next: { label: 'Sign-off needed by', at: hoursFromNow(5) },
+          }],
+          ['ivkit', 9, {
+            status: 'arriving_today',
+            note: 'Ordered by charge nurse this morning.',
+            next: { label: 'ETA', at: laterToday(3) },
+          }],
+        ],
+        deliveries: [
+          ['gauze4', 8, 96, 'T. Alvarez'],
+          ['glovesM', 10, 96, 'T. Alvarez'],
+          ['underpad', 6, 1490, 'M. Reyes'],
+        ],
+        orders: [
+          ['ivkit', 6, 190, 'K. Osei, RN', 3],
+          ['film475', 4, 2760, 'K. Osei, RN', 30],
+        ],
+      }),
+      loc('4south', '4 South — Clean Utility', 'Clean utility', {
+        lastCount: [150, 'T. Alvarez'],
+        items: [
+          ['nonadh', 8],
+          ['gauze4', 17],
+          ['glovesL', 20],
+          ['ace4', 21],
+          ['mask2', 18],
+          ['cannula', 16],
+        ],
+        deliveries: [
+          ['nonadh', 4, 152, 'T. Alvarez'],
+          ['mask2', 6, 1420, 'M. Reyes'],
+        ],
+        orders: [['ace4', 12, 320, 'D. Whitfield, RN', 26]],
+      }),
+      loc('5north', '5 North — Clean Utility', 'Clean utility', {
+        lastCount: [70, 'M. Reyes'],
+        items: [
+          ['glovesM', 26],
+          ['needle21', 4, {
+            status: 'arriving_today',
+            note: 'Below PAR — replenishment on the afternoon run.',
+            next: { label: 'ETA', at: laterToday(1) },
+          }],
+          ['syringe3', 10],
+          ['gauze2', 13],
+          ['ekg', 9],
+          ['specimen', 12],
+        ],
+        deliveries: [
+          ['glovesM', 12, 72, 'M. Reyes'],
+          ['ekg', 4, 1380, 'T. Alvarez'],
+        ],
+        orders: [['needle21', 8, 140, 'K. Osei, RN', 1]],
+      }),
+      loc('6east', '6 East — Clean Utility', 'Clean utility', {
+        lastCount: [230, 'M. Reyes'],
+        items: [
+          ['feedbag', 3, {
+            status: 'backordered',
+            exception: 'no_substitute',
+            note: 'Manufacturer allocation. Nothing equivalent stocked; roughly 4 days of use on hand.',
+            next: { label: 'Vendor update', text: 'no date committed' },
+          }],
+          ['ngtube', 5],
+          ['gauze4', 15],
+          ['glovesL', 18],
+          ['underpad', 14],
+          ['saline250', 20],
+        ],
+        deliveries: [
+          ['saline250', 12, 235, 'M. Reyes'],
+          ['glovesL', 6, 1500, 'T. Alvarez'],
+        ],
+        orders: [['ngtube', 6, 400, 'D. Whitfield, RN', 28]],
+      }),
+    ],
+  },
+  {
+    id: 'critical',
+    name: 'Critical Care',
+    blurb: 'ICU supply rooms and PACU',
+    locations: [
+      loc('icua', 'ICU — Supply Room A', 'Supply room', {
+        lastCount: [55, 'T. Alvarez'],
+        items: [
+          ['foley16', 4, {
+            status: 'delayed',
+            note: 'Carrier delay in transit — arriving tomorrow morning instead of today.',
+            next: { label: 'Revised ETA', at: hoursFromNow(21) },
+          }],
+          ['suction', 10],
+          ['ivkit', 15],
+          ['syringe10', 11],
+          ['chg26', 7],
+          ['gownL', 16],
+        ],
+        deliveries: [
+          ['suction', 6, 58, 'T. Alvarez'],
+          ['ivkit', 8, 1400, 'M. Reyes'],
+        ],
+        orders: [['foley16', 8, 610, 'A. Duarte, RN', 21]],
+      }),
+      loc('icub', 'ICU — Supply Room B', 'Supply room', {
+        lastCount: [40, 'T. Alvarez'],
+        items: [
+          ['trach', 2, {
+            status: 'delayed',
+            note: 'Short-shipped from the distributor; balance releases this evening.',
+            next: { label: 'Revised ETA', at: hoursFromNow(9) },
+          }],
+          ['ngtube', 6],
+          ['suction', 9],
+          ['glovesM', 24],
+          ['gauze4', 16],
+          ['cannula', 18],
+        ],
+        deliveries: [
+          ['gauze4', 6, 44, 'T. Alvarez'],
+          ['cannula', 10, 1350, 'M. Reyes'],
+        ],
+        orders: [['trach', 4, 250, 'A. Duarte, RN', 9]],
+      }),
+      loc('pacu', 'PACU — Supply Room', 'Supply room', {
+        lastCount: [120, 'M. Reyes'],
+        items: [
+          ['saline250', 22],
+          ['syringe10', 12],
+          ['gownL', 19],
+          ['ekg', 11],
+          ['mask2', 17],
+        ],
+        deliveries: [['saline250', 12, 122, 'M. Reyes']],
+        orders: [],
+      }),
+    ],
+  },
+  {
+    id: 'ed',
+    name: 'Emergency',
+    blurb: 'ED PAR rooms 1 and 2',
+    locations: [
+      loc('ed1', 'ED — PAR 1', 'PAR room', {
+        lastCount: [35, 'M. Reyes'],
+        items: [
+          ['ivkit', 11, {
+            status: 'arriving_today',
+            note: 'High use overnight — replenishment on the way.',
+            next: { label: 'ETA', at: laterToday(3) },
+          }],
+          ['gauze4', 18],
+          ['ace4', 20],
+          ['suture30', 8],
+          ['glovesM', 25],
+          ['edta4', 13],
+        ],
+        deliveries: [
+          ['gauze4', 10, 38, 'M. Reyes'],
+          ['suture30', 4, 1320, 'T. Alvarez'],
+        ],
+        orders: [['ivkit', 10, 120, 'R. Banerjee, RN', 3]],
+      }),
+      loc('ed2', 'ED — PAR 2', 'PAR room', {
+        lastCount: [28, 'M. Reyes'],
+        items: [
+          ['syringe10', 5, {
+            status: 'arriving_today',
+            note: 'Below PAR after the overnight census.',
+            next: { label: 'ETA', at: laterToday(2) },
+          }],
+          ['needle21', 8],
+          ['edta4', 12],
+          ['specimen', 14],
+          ['mask2', 19],
+          ['glovesL', 21],
+        ],
+        deliveries: [
+          ['edta4', 8, 30, 'M. Reyes'],
+          ['glovesL', 8, 1290, 'T. Alvarez'],
+        ],
+        orders: [['syringe10', 10, 95, 'R. Banerjee, RN', 2]],
+      }),
+    ],
+  },
+  {
+    id: 'periop',
+    name: 'Perioperative',
+    blurb: 'OR core rooms',
+    locations: [
+      loc('or1', 'OR Core — Suite 1', 'Core room', {
+        lastCount: [58, 'T. Alvarez'],
+        items: [
+          ['gownL', 18],
+          ['gauze4', 19],
+          ['suture30', 9],
+          ['chg26', 8],
+          ['mask2', 20],
+        ],
+        deliveries: [['gownL', 10, 60, 'T. Alvarez']],
+        orders: [],
+      }),
+      loc('or2', 'OR Core — Suite 2', 'Core room', {
+        lastCount: [45, 'T. Alvarez'],
+        items: [
+          ['chg26', 3, {
+            status: 'delayed',
+            note: 'Held at receiving for lot verification.',
+            next: { label: 'Revised ETA', at: hoursFromNow(6) },
+          }],
+          ['suture30', 4, {
+            status: 'backordered',
+            note: 'Approved substitute suture is already stocked at this core — no action needed.',
+            substitute: 'Suture, 3-0 polypropylene — 7 box on hand',
+            next: { label: 'Fill date', at: daysFromNow(9) },
+          }],
+          ['gownL', 17],
+          ['gauze4', 20],
+          ['glovesM', 23],
+        ],
+        deliveries: [['gauze4', 8, 47, 'T. Alvarez']],
+        orders: [['chg26', 6, 300, 'J. Pham, RN', 6]],
+      }),
+      loc('or4', 'OR Core — Suite 4', 'Core room', {
+        lastCount: [100, 'M. Reyes'],
+        items: [
+          ['suction', 11],
+          ['gownL', 20],
+          ['saline250', 21],
+          ['glovesL', 22],
+          ['mask2', 18],
+        ],
+        deliveries: [['suction', 6, 102, 'M. Reyes']],
+        orders: [],
+      }),
+    ],
+  },
+  {
+    id: 'clinics',
+    name: 'Clinics & Ancillary',
+    blurb: 'Wound care, ortho, rehab, lab draw',
+    locations: [
+      loc('wound', 'Wound Care Clinic', 'Clinic PAR', {
+        lastCount: [180, 'M. Reyes'],
+        items: [
+          ['alginate', 1, {
+            status: 'backordered',
+            exception: 'no_substitute',
+            note: 'No fill date from the vendor. Nothing equivalent stocked — materials management is sourcing.',
+            next: { label: 'Vendor update', text: `expected ${daysFromNow(2).toLocaleDateString([], { month: 'short', day: 'numeric' })}` },
+          }],
+          ['hydro44', 2, {
+            status: 'substitute_pending',
+            exception: 'needs_signoff',
+            note: 'Alternate brand offered by the distributor — needs wound care review before it can be ordered.',
+            substitute: 'Hydrocolloid 4x4 (alternate brand) — quoted, not ordered',
+            next: { label: 'Sign-off needed by', at: hoursFromNow(23) },
+          }],
+          ['npwtsm', 3, {
+            status: 'backordered',
+            note: 'Approved substitute kit already stocked at this PAR — no action needed.',
+            substitute: 'NPWT kit, small (alternate brand) — 4 kit on hand',
+            next: { label: 'Fill date', at: daysFromNow(6) },
+          }],
+          ['nonadh', 9],
+          ['gauze4', 15],
+          ['film475', 7],
+        ],
+        deliveries: [
+          ['gauze4', 6, 182, 'M. Reyes'],
+          ['nonadh', 4, 1460, 'T. Alvarez'],
+        ],
+        orders: [['hydro44', 4, 1500, 'L. Maher, RN', 40]],
+      }),
+      loc('ortho', 'Ortho Clinic — PAR 1', 'Clinic PAR', {
+        lastCount: [110, 'M. Reyes'],
+        items: [
+          ['ace4', 22],
+          ['gauze4', 16],
+          ['nonadh', 10],
+          ['glovesM', 21],
+        ],
+        deliveries: [['ace4', 12, 112, 'M. Reyes']],
+        orders: [],
+      }),
+      loc('rehab', 'Rehab — PAR 3', 'Clinic PAR', {
+        lastCount: [135, 'T. Alvarez'],
+        items: [
+          ['cath14', 6, {
+            status: 'substitute_pending',
+            note: 'Substitute approved by nursing — shipping from an alternate distributor.',
+            substitute: 'Intermittent catheter 14 Fr (alternate brand) — approved',
+            next: { label: 'Substitute ETA', at: hoursFromNow(20) },
+          }],
+          ['glovesM', 20],
+          ['underpad', 15],
+          ['gauze2', 12],
+        ],
+        deliveries: [['underpad', 6, 138, 'T. Alvarez']],
+        orders: [['cath14', 20, 900, 'L. Maher, RN', 20]],
+      }),
+      loc('lab', 'Lab — Draw Station', 'Draw station', {
+        lastCount: [50, 'M. Reyes'],
+        items: [
+          ['edta4', 9, {
+            status: 'arriving_today',
+            note: 'Steady draw volume this week; standing order runs daily.',
+            next: { label: 'ETA', at: laterToday(4) },
+          }],
+          ['needle21', 9],
+          ['specimen', 13],
+          ['glovesM', 19],
+        ],
+        deliveries: [['specimen', 8, 52, 'M. Reyes']],
+        orders: [['edta4', 15, 60, 'S. Kirby, RN', 4]],
+      }),
+    ],
+  },
+]
+
+// --- derived views ---------------------------------------------------------
+
+function locationSummary(location) {
+  const attention = location.items.filter((i) => i.exception)
+  const backordered = location.items.filter((i) => i.status === 'backordered')
+  return {
+    items: location.items.length,
+    attention: attention.length,
+    backordered: backordered.length,
+    orders: location.orders.length,
+    arrivingToday: location.orders.filter((o) => o.sameDay).length,
+    belowPar: location.items.filter((i) => i.onHand < i.par).length,
+  }
+}
+
+function areaSummary(area) {
+  return area.locations.reduce(
+    (acc, l) => {
+      const s = locationSummary(l)
+      acc.locations += 1
+      acc.attention += s.attention
+      acc.backordered += s.backordered
+      acc.orders += s.orders
+      return acc
+    },
+    { locations: 0, attention: 0, backordered: 0, orders: 0 },
+  )
+}
+
+function findArea(areaId) {
+  return areas.find((a) => a.id === areaId) ?? null
+}
+
+function findLocation(areaId, locationId) {
+  return findArea(areaId)?.locations.find((l) => l.id === locationId) ?? null
+}
+
+function backorderItems(location) {
+  return location.items.filter((i) => i.status === 'backordered' || i.status === 'substitute_pending')
+}
+
+
+var state = { areaId: null, locationId: null, tab: 'items' }
+var TABS = [
+  { id: 'items', label: 'Items' },
+  { id: 'delivered', label: 'Delivered' },
+  { id: 'orders', label: 'Orders' },
+  { id: 'backorder', label: 'Backorder' },
+]
+
+function esc(s) {
+  return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+}
+
+function nextText(next) {
+  return next.text ? next.text : formatWhen(next.at)
+}
+
+function flag(n) {
+  return n > 0 ? '<span class="flag">' + attention(n) + '</span>' : ''
+}
+
+function areasScreen() {
+  var cards = areas
+    .map(function (area) {
+      var s = areaSummary(area)
+      return (
+        '<li><button type="button" class="card" data-area="' + area.id + '">' +
+        '<span class="card-head"><span class="card-title">' + esc(area.name) + '</span><span class="chev" aria-hidden="true">›</span></span>' +
+        '<span class="card-blurb">' + esc(area.blurb) + '</span>' +
+        '<span class="card-meta"><span>' + count(s.locations, 'location') + '</span><span>' + count(s.orders, 'open order') + '</span>' + flag(s.attention) + '</span>' +
+        '</button></li>'
+      )
+    })
+    .join('')
+  return '<h2 class="screen-title">Areas</h2><p class="screen-sub">Pick an area to see its PAR locations.</p><ul class="cards">' + cards + '</ul>'
+}
+
+function locationsScreen(area) {
+  var rows = area.locations
+    .map(function (l) {
+      var s = locationSummary(l)
+      return (
+        '<li><button type="button" class="list-row" data-location="' + l.id + '">' +
+        '<span class="list-main"><span class="list-title">' + esc(l.name) + '</span>' +
+        '<span class="list-sub">Counted ' + formatRelative(l.lastCount.at) + ' by ' + esc(l.lastCount.handler) + '</span></span>' +
+        '<span class="list-side">' + flag(s.attention) + '<span class="muted">' + s.items + ' items · ' + s.orders + ' orders</span></span>' +
+        '<span class="chev" aria-hidden="true">›</span>' +
+        '</button></li>'
+      )
+    })
+    .join('')
+  return (
+    '<h2 class="screen-title">' + esc(area.name) + '</h2>' +
+    '<p class="screen-sub">' + count(area.locations.length, 'PAR location') + '</p>' +
+    '<ul class="rows-list">' + rows + '</ul>'
+  )
+}
+
+function itemCard(item) {
+  var short = item.onHand < item.par
+  return (
+    '<li class="item' + (item.exception ? ' item--exception' : '') + '">' +
+    '<div class="item-top"><span class="item-name">' + esc(item.name) + '</span>' +
+    '<span class="pill pill--' + item.status + '">' + item.statusLabel + '</span></div>' +
+    '<div class="item-counts"><span class="count' + (short ? ' count--short' : '') + '">' +
+    item.onHand + ' of ' + item.par + ' ' + item.unit + '</span>' +
+    '<span class="count-note">' + (short ? item.par - item.onHand + ' below PAR' : 'at PAR') + '</span></div>' +
+    (item.exception ? '<p class="exception">' + esc(EXCEPTION[item.exception]) + '</p>' : '') +
+    (item.note ? '<p class="item-note">' + esc(item.note) + '</p>' : '') +
+    (item.substitute ? '<p class="item-sub"><span class="field-label">Substitute</span> ' + esc(item.substitute) + '</p>' : '') +
+    '<p class="item-next"><span class="field-label">' + esc(item.next.label) + '</span> ' + esc(nextText(item.next)) + '</p>' +
+    '</li>'
+  )
+}
+
+function itemsPanel(location) {
+  return '<ul class="items">' + location.items.map(itemCard).join('') + '</ul>'
+}
+
+function deliveriesPanel(location) {
+  if (location.deliveries.length === 0) return '<p class="empty">No deliveries logged in the last 48 hours.</p>'
+  var rows = location.deliveries
+    .map(function (d) {
+      return (
+        '<li><span class="record-main"><span class="record-title">' + esc(d.name) + '</span>' +
+        '<span class="record-sub">Stocked by ' + esc(d.handler) + '</span></span>' +
+        '<span class="record-side"><span class="qty">+' + d.qty + ' ' + d.unit + '</span>' +
+        '<span class="muted">' + formatRelative(d.at) + '</span></span></li>'
+      )
+    })
+    .join('')
+  return (
+    '<p class="panel-note">Last PAR count ' + formatRelative(location.lastCount.at) + ' by ' + esc(location.lastCount.handler) + '.</p>' +
+    '<ul class="records">' + rows + '</ul>'
+  )
+}
+
+function ordersPanel(location) {
+  if (location.orders.length === 0) return '<p class="empty">No open orders for this location.</p>'
+  var rows = location.orders
+    .map(function (o) {
+      return (
+        '<li><span class="record-main"><span class="record-title">' + esc(o.name) + '</span>' +
+        '<span class="record-sub">Ordered by ' + esc(o.orderedBy) + ' · ' + formatRelative(o.placedAt) + '</span></span>' +
+        '<span class="record-side"><span class="qty">' + o.qty + ' ' + o.unit + '</span>' +
+        '<span class="' + (o.sameDay ? 'eta eta--today' : 'eta') + '">' + (o.sameDay ? 'Arrives ' : 'ETA ') + formatWhen(o.eta) + '</span></span></li>'
+      )
+    })
+    .join('')
+  return '<ul class="records">' + rows + '</ul>'
+}
+
+function backorderPanel(items) {
+  if (items.length === 0) return '<p class="empty">Nothing on backorder at this location.</p>'
+  return '<ul class="items">' + items.map(itemCard).join('') + '</ul>'
+}
+
+function detailScreen(location) {
+  var backorders = backorderItems(location)
+  var counts = {
+    items: location.items.length,
+    delivered: location.deliveries.length,
+    orders: location.orders.length,
+    backorder: backorders.length,
+  }
+  var tabs = TABS.map(function (t) {
+    return (
+      '<button type="button" role="tab" id="tab-' + t.id + '" aria-controls="panel" aria-selected="' + (t.id === state.tab) + '"' +
+      ' class="tab' + (t.id === state.tab ? ' is-on' : '') + '" data-tab="' + t.id + '">' + t.label +
+      '<span class="tab-count">' + counts[t.id] + '</span></button>'
+    )
+  }).join('')
+
+  var body =
+    state.tab === 'items' ? itemsPanel(location)
+    : state.tab === 'delivered' ? deliveriesPanel(location)
+    : state.tab === 'orders' ? ordersPanel(location)
+    : backorderPanel(backorders)
+
+  return (
+    '<h2 class="screen-title">' + esc(location.name) + '</h2>' +
+    '<p class="screen-sub">' + esc(location.kind) + ' · counted ' + formatRelative(location.lastCount.at) + ' by ' + esc(location.lastCount.handler) + '</p>' +
+    '<div class="tabs" role="tablist" aria-label="Location views">' + tabs + '</div>' +
+    '<div class="panel" id="panel" role="tabpanel" aria-labelledby="tab-' + state.tab + '">' + body + '</div>'
+  )
+}
+
+function crumbs(area, location) {
+  var trail = [{ label: 'Areas', level: 0 }]
+  if (area) trail.push({ label: area.name, level: 1 })
+  if (location) trail.push({ label: location.name, level: 2 })
+
+  var back = trail.length > 1 ? trail[trail.length - 2] : null
+  var html = back
+    ? '<button type="button" class="back" data-back="' + back.level + '"><span aria-hidden="true">‹</span> ' + esc(back.label) + '</button>'
+    : ''
+  html += '<ol>' + trail
+    .map(function (c, i) {
+      return '<li' + (i === trail.length - 1 ? ' aria-current="page"' : '') + '>' + esc(c.label) + '</li>'
+    })
+    .join('') + '</ol>'
+  return html
+}
+
+function render() {
+  var area = state.areaId ? findArea(state.areaId) : null
+  var location = area && state.locationId ? findLocation(state.areaId, state.locationId) : null
+
+  document.getElementById('crumbs').innerHTML = crumbs(area, location)
+  document.getElementById('screen').innerHTML = location ? detailScreen(location) : area ? locationsScreen(area) : areasScreen()
+  window.scrollTo({ top: 0 })
+}
+
+document.addEventListener('click', function (e) {
+  var el = e.target.closest('[data-area], [data-location], [data-tab], [data-back]')
+  if (!el) return
+  if (el.dataset.area) state = { areaId: el.dataset.area, locationId: null, tab: 'items' }
+  else if (el.dataset.location) state = { areaId: state.areaId, locationId: el.dataset.location, tab: 'items' }
+  else if (el.dataset.tab) state = { areaId: state.areaId, locationId: state.locationId, tab: el.dataset.tab }
+  else if (el.dataset.back === '0') state = { areaId: null, locationId: null, tab: 'items' }
+  else if (el.dataset.back === '1') state = { areaId: state.areaId, locationId: null, tab: 'items' }
+  render()
+})
+
+document.getElementById('asof').textContent = 'As of ' + formatClock(new Date()) + ' · demo data'
+render()
+</script>
